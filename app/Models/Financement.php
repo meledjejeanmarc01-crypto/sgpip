@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Financement extends Model
 {
-    protected $fillable = ['montant_engage', 'date', 'reference', 'projet_id', 'bailleur_id', 'etat_id'];
+    protected $fillable = ['montant_engage', 'date', 'reference', 'type_source', 'projet_id', 'bailleur_id', 'etat_id'];
 
     protected function casts(): array
     {

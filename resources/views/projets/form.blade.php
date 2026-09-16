@@ -170,6 +170,34 @@
         <input type="text" name="code_psgouv" value="{{ old('code_psgouv', $projet->code_psgouv ?? '') }}" class="form-control">
     </div>
 </div>
+
+<h6 class="fw-bold mb-3">Contexte, attentes et contraintes</h6>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Appartenance</label>
+        <input type="text" name="appartenance" value="{{ old('appartenance', $projet->appartenance ?? '') }}" class="form-control">
+    </div>
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Taille</label>
+        <input type="text" name="taille" value="{{ old('taille', $projet->taille ?? '') }}" class="form-control">
+    </div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Problème</label>
+    <textarea name="probleme" class="form-control" rows="2">{{ old('probleme', $projet->probleme ?? '') }}</textarea>
+</div>
+<div class="mb-3">
+    <label class="form-label">Attentes par rapport au projet</label>
+    <textarea name="attentes_projet" class="form-control" rows="2">{{ old('attentes_projet', $projet->attentes_projet ?? '') }}</textarea>
+</div>
+<div class="mb-3">
+    <label class="form-label">Craintes par rapport au projet</label>
+    <textarea name="craintes_projet" class="form-control" rows="2">{{ old('craintes_projet', $projet->craintes_projet ?? '') }}</textarea>
+</div>
+<div class="mb-3">
+    <label class="form-label">Observations</label>
+    <textarea name="observations" class="form-control" rows="2">{{ old('observations', $projet->observations ?? '') }}</textarea>
+</div>
 <hr>
 <div class="mb-3">
     <label class="form-label">Fiches PIP associées</label>

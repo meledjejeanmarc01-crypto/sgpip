@@ -45,6 +45,20 @@
         </select>
     </div>
 </div>
+<div class="mb-3">
+    <label class="form-label">Nature de la source de financement</label>
+    <select name="type_source" class="form-select">
+        <option value="">-- Non précisé --</option>
+        <option value="tresor" @selected(old('type_source', $financement->type_source ?? '') == 'tresor')>Trésor</option>
+        <option value="emprunt" @selected(old('type_source', $financement->type_source ?? '') == 'emprunt')>Emprunt</option>
+        <option value="don" @selected(old('type_source', $financement->type_source ?? '') == 'don')>Don</option>
+        <option value="participation_collectivites" @selected(old('type_source', $financement->type_source ?? '') == 'participation_collectivites')>Participation des collectivités</option>
+        <option value="participation_populations" @selected(old('type_source', $financement->type_source ?? '') == 'participation_populations')>Participation des populations</option>
+        <option value="participation_secteur_prive" @selected(old('type_source', $financement->type_source ?? '') == 'participation_secteur_prive')>Participation du secteur privé</option>
+        <option value="ppp" @selected(old('type_source', $financement->type_source ?? '') == 'ppp')>Partenariat Public-Privé (PPP)</option>
+        <option value="fonds_propres_parapublics" @selected(old('type_source', $financement->type_source ?? '') == 'fonds_propres_parapublics')>Fonds propres parapublics</option>
+    </select>
+</div>
 <script>
 function toggleSource(){
     const v = document.getElementById('source_type').value;

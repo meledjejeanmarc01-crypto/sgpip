@@ -57,7 +57,7 @@ class ZoneLocalisationController extends Controller
     private function validateData(Request $request): array
     {
         return $request->validate([
-            'type' => 'required|in:district,region,departement,sous_prefecture,commune,localite',
+            'type' => 'required|in:district,region,departement,sous_prefecture,commune,localite,village,hors_ci',
             'libelle' => 'required|string|max:255',
             'parent_id' => 'nullable|exists:zones_localisation,id',
             'latitude' => 'nullable|numeric|between:-90,90',

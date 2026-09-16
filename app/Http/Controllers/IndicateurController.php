@@ -34,9 +34,13 @@ class IndicateurController extends Controller
         return $request->validate([
             'nom' => 'required|string|max:255',
             'unite' => 'nullable|string|max:50',
+            'situation_reference' => 'nullable|string|max:255',
             'valeur_cible' => 'nullable|numeric',
             'valeur_realisee' => 'nullable|numeric',
             'date_mesure' => 'nullable|date',
+            'sources_verification' => 'nullable|string|max:255',
+            'hypothese' => 'nullable|string|max:255',
+            'resultat_attendu_id' => 'nullable|exists:resultats_attendus,id',
         ]);
     }
 }

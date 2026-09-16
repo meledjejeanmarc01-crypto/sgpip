@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Indicateur extends Model
 {
-    protected $fillable = ['nom', 'unite', 'valeur_cible', 'valeur_realisee', 'date_mesure', 'activite_id'];
+    protected $fillable = ['nom', 'unite', 'situation_reference', 'valeur_cible', 'valeur_realisee', 'date_mesure', 'sources_verification', 'hypothese', 'activite_id', 'resultat_attendu_id'];
 
     protected function casts(): array
     {
@@ -16,6 +16,11 @@ class Indicateur extends Model
     public function activite()
     {
         return $this->belongsTo(Activite::class);
+    }
+
+    public function resultatAttendu()
+    {
+        return $this->belongsTo(ResultatAttendu::class);
     }
 
     public function getTauxRealisationAttribute(): ?float

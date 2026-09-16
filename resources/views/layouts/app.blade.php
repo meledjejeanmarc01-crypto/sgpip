@@ -21,7 +21,7 @@
         .sidebar .nav-link.active, .sidebar .nav-link:hover { background: rgba(255,255,255,.18); color: #fff; border-radius: .4rem; }
         .sidebar .nav-header { color: rgba(255,255,255,.65); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; margin-top: 1rem; }
         .navbar-top { border-bottom: 3px solid var(--sgspip-vert); }
-        .card-stat { border: none; border-radius: .75rem; box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+        .card-stat { border: 1px solid #eef0f2; border-radius: .75rem; box-shadow: 0 1px 3px rgba(0,0,0,.03); }
         .badge-statut-en_cours { background-color: #0d6efd; }
         .badge-statut-termine { background-color: #009A44; }
         .badge-statut-planifie { background-color: #6c757d; }
@@ -81,6 +81,11 @@
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('structures.*') ? 'active' : '' }}" href="{{ route('structures.index') }}"><i class="bi bi-building me-2"></i>Structures</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('types-structure.*') ? 'active' : '' }}" href="{{ route('types-structure.index') }}"><i class="bi bi-tags me-2"></i>Types de structure</a></li>
             <li class="nav-item"><a class="nav-link {{ request()->routeIs('types-bailleur.*') ? 'active' : '' }}" href="{{ route('types-bailleur.index') }}"><i class="bi bi-tags me-2"></i>Types de bailleur</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('types-objectif.*') ? 'active' : '' }}" href="{{ route('types-objectif.index') }}"><i class="bi bi-tags me-2"></i>Types d'objectif</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('types-partie-prenante.*') ? 'active' : '' }}" href="{{ route('types-partie-prenante.index') }}"><i class="bi bi-tags me-2"></i>Types de partie prenante</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('types-analyse-causale.*') ? 'active' : '' }}" href="{{ route('types-analyse-causale.index') }}"><i class="bi bi-tags me-2"></i>Types d'analyse causale</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('groupes-acteur.*') ? 'active' : '' }}" href="{{ route('groupes-acteur.index') }}"><i class="bi bi-people me-2"></i>Groupes d'acteur</a></li>
+            <li class="nav-item"><a class="nav-link {{ request()->routeIs('acteurs.*') ? 'active' : '' }}" href="{{ route('acteurs.index') }}"><i class="bi bi-people me-2"></i>Acteurs</a></li>
             @if(auth()->user()?->isAdministrateur())
                 <li class="nav-item"><a class="nav-link {{ request()->routeIs('utilisateurs.*') ? 'active' : '' }}" href="{{ route('utilisateurs.index') }}"><i class="bi bi-people me-2"></i>Utilisateurs</a></li>
             @endif

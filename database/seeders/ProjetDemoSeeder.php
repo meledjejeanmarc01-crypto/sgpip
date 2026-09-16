@@ -91,6 +91,19 @@ class ProjetDemoSeeder extends Seeder
             ['secteur' => 'Jeunesse', 'zone' => 'Tchologo', 'intitule' => 'Construire et équiper 12 Agences (une dans chacune des Sous-Préfectures) types de l\'agence emploi jeunes dans la région'],
             ['secteur' => 'Environnement', 'zone' => 'Marcory', 'intitule' => 'Promouvoir l\'énergie renouvelable (solaire sur bâtiments publics et éclairage public)'],
             ['secteur' => 'Environnement', 'zone' => 'Cocody', 'intitule' => 'Mettre en place des centres de traitement des eaux usées et de lutte contre les inondations'],
+            ['secteur' => 'Enseignement Technique et Formation Professionnelle', 'zone' => 'Bélier', 'intitule' => 'Construire le Lycée Professionnel de Toumodi'],
+            ['secteur' => 'Infrastructures Routières', 'zone' => 'Béré', 'intitule' => 'Aménager et bitumer la route Séguéla-Kongasso-Kounahiri (100 km)'],
+            ['secteur' => 'Éducation', 'zone' => 'Bounkani', 'intitule' => 'Poursuivre la construction du Lycée d\'Excellence de jeunes filles de Bouna'],
+            ['secteur' => 'Commerce', 'zone' => 'Cavally', 'intitule' => 'Reconstruire aux normes le marché de détail de Guiglo'],
+            ['secteur' => 'Infrastructures', 'zone' => 'Folon', 'intitule' => 'Construire le pont sur l\'axe Banankoro - Manadoun'],
+            ['secteur' => 'Infrastructures Routières', 'zone' => 'Guémon', 'intitule' => 'Aménager et bitumer la route Guéhiebly - Zou - Mahapleu (91 km)'],
+            ['secteur' => 'Santé', 'zone' => 'Hambol', 'intitule' => 'Poursuivre la construction et l\'équipement du CHR de Katiola'],
+            ['secteur' => 'Enseignement Supérieur et Recherche Scientifique', 'zone' => 'Indénié-Djuablin', 'intitule' => 'Construire l\'Université d\'Abengourou'],
+            ['secteur' => 'Commerce', 'zone' => 'Lôh-Djiboua', 'intitule' => 'Poursuivre la construction de dix (10) marchés dans le Lôh-Djiboua'],
+            ['secteur' => 'Électricité', 'zone' => 'Nawa', 'intitule' => 'Poursuivre les travaux de réhabilitation du groupe 3 de la centrale hydroélectrique de Buyo'],
+            ['secteur' => 'Enseignement Technique et Formation Professionnelle', 'zone' => 'Nzi', 'intitule' => 'Construire le Lycée Professionnel de Dimbokro'],
+            ['secteur' => 'Transport', 'zone' => 'Le Plateau', 'intitule' => 'Finaliser la construction des infrastructures et mettre en service le métro d\'Abidjan'],
+            ['secteur' => 'Électricité', 'zone' => 'Sud-Comoé', 'intitule' => 'Finaliser la construction de la centrale à biomasse BIOVEA à Aboisso'],
     ];
 
     /** Correspondance secteur du PIP -> sigle de la structure (ministère) responsable */

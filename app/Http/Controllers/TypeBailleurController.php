@@ -21,7 +21,12 @@ class TypeBailleurController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate(['libelle' => 'required|string|max:255|unique:types_bailleur,libelle']);
-        TypeBailleur::create($data);
+        $type = TypeBailleur::create($data);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['id' => $type->id, 'libelle' => $type->libelle]);
+        }
+
         return redirect()->route('types-bailleur.index')->with('success', 'Type de bailleur créé avec succès.');
     }
 

@@ -57,6 +57,14 @@
         <div class="col-md-3"><div class="text-muted">Cible T3</div><div class="fw-semibold">{{ $projet->cible_trimestre_3 ?: '—' }}</div></div>
         <div class="col-md-3"><div class="text-muted">Cible T4</div><div class="fw-semibold">{{ $projet->cible_trimestre_4 ?: '—' }}</div></div>
     </div>
+    <div class="row small mt-2">
+        <div class="col-md-4"><strong>Appartenance :</strong> {{ $projet->appartenance ?? '—' }}</div>
+        <div class="col-md-4"><strong>Taille :</strong> {{ $projet->taille ?? '—' }}</div>
+    </div>
+    @if($projet->probleme)<p class="small mt-2 mb-1"><strong>Problème :</strong> {{ $projet->probleme }}</p>@endif
+    @if($projet->attentes_projet)<p class="small mb-1"><strong>Attentes par rapport au projet :</strong> {{ $projet->attentes_projet }}</p>@endif
+    @if($projet->craintes_projet)<p class="small mb-1"><strong>Craintes par rapport au projet :</strong> {{ $projet->craintes_projet }}</p>@endif
+    @if($projet->observations)<p class="small mb-0"><strong>Observations :</strong> {{ $projet->observations }}</p>@endif
     <div class="mt-3">
         <div class="d-flex justify-content-between small mb-1"><span>Avancement physique</span><span>{{ $projet->avancement_physique }}%</span></div>
         <div class="progress" style="height:8px;"><div class="progress-bar bg-success" style="width: {{ $projet->avancement_physique }}%"></div></div>
@@ -86,20 +94,77 @@
     </div>
 </div>
 
-<ul class="nav nav-tabs mb-3 flex-nowrap overflow-auto" role="tablist">
-    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#activites">Activités & tâches</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#composantes">Composantes</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#objectifs">Objectifs spécifiques</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#financier">Financements</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#marches">Marchés</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#charges">Charges récurrentes</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#risques">Risques</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#parties">Parties prenantes</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cibles">Cibles</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#etudes">Études</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#rapports">Rapports</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#pieces">Pièces justificatives</button></li>
+<ul class="nav nav-pills gap-1 mb-3" id="catPills">
+    <li class="nav-item"><button type="button" class="btn btn-sm cat-btn active" data-cat="cadrage">Cadrage</button></li>
+    <li class="nav-item"><button type="button" class="btn btn-sm cat-btn" data-cat="parties">Parties prenantes</button></li>
+    <li class="nav-item"><button type="button" class="btn btn-sm cat-btn" data-cat="finances">Finances</button></li>
+    <li class="nav-item"><button type="button" class="btn btn-sm cat-btn" data-cat="suivi">Suivi & gouvernance</button></li>
+    <li class="nav-item"><button type="button" class="btn btn-sm cat-btn" data-cat="documents">Documents</button></li>
 </ul>
+
+<div class="cat-group" data-cat="cadrage">
+    <ul class="nav nav-tabs mb-3 flex-nowrap overflow-auto" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#activites">Activités & tâches</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#composantes">Composantes</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#objectifs">Objectifs spécifiques</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cadre-logique">Cadre logique</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#analyse-causale">Analyse causale</button></li>
+    </ul>
+</div>
+<div class="cat-group d-none" data-cat="parties">
+    <ul class="nav nav-tabs mb-3 flex-nowrap overflow-auto" role="tablist">
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#risques">Risques</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#parties">Parties prenantes</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cibles">Cibles</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#acteurs">Acteurs</button></li>
+    </ul>
+</div>
+<div class="cat-group d-none" data-cat="finances">
+    <ul class="nav nav-tabs mb-3 flex-nowrap overflow-auto" role="tablist">
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#financier">Financements</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#marches">Marchés</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#charges">Charges récurrentes</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#budget">Budget</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#portefeuille">Portefeuille</button></li>
+    </ul>
+</div>
+<div class="cat-group d-none" data-cat="suivi">
+    <ul class="nav nav-tabs mb-3 flex-nowrap overflow-auto" role="tablist">
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#etudes">Études</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#comites">Comités</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#criteres">Critères d'évaluation</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#emplois">Opportunités d'emploi</button></li>
+    </ul>
+</div>
+<div class="cat-group d-none" data-cat="documents">
+    <ul class="nav nav-tabs mb-3 flex-nowrap overflow-auto" role="tablist">
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#rapports">Rapports</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#pieces">Pièces justificatives</button></li>
+    </ul>
+</div>
+
+<style>
+    .cat-btn { border: 1px solid #dee2e6; background: #fff; color: #495057; border-radius: 2rem; padding: .35rem 1rem; }
+    .cat-btn.active { background: #FF8200; border-color: #FF8200; color: #fff; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.cat-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            var cat = this.dataset.cat;
+            document.querySelectorAll('.cat-group').forEach(function (group) {
+                group.classList.toggle('d-none', group.dataset.cat !== cat);
+            });
+            var firstTabBtn = document.querySelector('.cat-group[data-cat="' + cat + '"] .nav-link');
+            if (firstTabBtn) {
+                new bootstrap.Tab(firstTabBtn).show();
+            }
+        });
+    });
+});
+</script>
 
 <div class="tab-content">
     {{-- Activités / tâches / indicateurs --}}
@@ -300,6 +365,31 @@
                                                     <label class="form-label">Date de mesure</label>
                                                     <input type="date" name="date_mesure" value="{{ optional($indicateur->date_mesure)->format('Y-m-d') }}" class="form-control">
                                                 </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Situation de référence</label>
+                                                    <input type="text" name="situation_reference" value="{{ $indicateur->situation_reference }}" class="form-control">
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-6 mb-3">
+                                                        <label class="form-label">Sources de vérification</label>
+                                                        <input type="text" name="sources_verification" value="{{ $indicateur->sources_verification }}" class="form-control">
+                                                    </div>
+                                                    <div class="col-6 mb-3">
+                                                        <label class="form-label">Hypothèse</label>
+                                                        <input type="text" name="hypothese" value="{{ $indicateur->hypothese }}" class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="mb-1">
+                                                    <label class="form-label">Résultat attendu mesuré</label>
+                                                    <select name="resultat_attendu_id" class="form-select">
+                                                        <option value="">-- Aucun --</option>
+                                                        @foreach($projet->objectifs as $obj)
+                                                            @foreach($obj->resultatsAttendus as $ra)
+                                                                <option value="{{ $ra->id }}" @selected($indicateur->resultat_attendu_id == $ra->id)>{{ $obj->libelle }} — {{ $ra->libelle }}</option>
+                                                            @endforeach
+                                                        @endforeach
+                                                    </select>
+                                                </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button>
@@ -472,18 +562,27 @@
             @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
             <form method="POST" action="{{ route('parties-prenantes.store', $projet) }}" class="row g-2 mb-3">
                 @csrf
-                <div class="col-md-6"><input type="text" name="groupe_acteurs" class="form-control form-control-sm" placeholder="Groupe d'acteurs" required></div>
-                <div class="col-md-4"><input type="text" name="role" class="form-control form-control-sm" placeholder="Rôle"></div>
+                <div class="col-md-4"><input type="text" name="groupe_acteurs" class="form-control form-control-sm" placeholder="Groupe d'acteurs" required></div>
+                <div class="col-md-3"><input type="text" name="role" class="form-control form-control-sm" placeholder="Rôle"></div>
+                <div class="col-md-3">
+                    <select name="type_partie_prenante_id" class="form-select form-select-sm">
+                        <option value="">Type</option>
+                        @foreach(\App\Models\TypePartiePrenante::orderBy('libelle')->get() as $tpp)
+                            <option value="{{ $tpp->id }}">{{ $tpp->libelle }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="col-md-2"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">Ajouter</button></div>
             </form>
             @endif
             <table class="table table-sm mb-0">
-                <thead><tr><th>Groupe d'acteurs</th><th>Rôle</th><th></th></tr></thead>
+                <thead><tr><th>Groupe d'acteurs</th><th>Rôle</th><th>Type</th><th></th></tr></thead>
                 <tbody>
                 @forelse($projet->partiesPrenantes as $partie)
                 <tr>
                     <td>{{ $partie->groupe_acteurs }}</td>
                     <td>{{ $partie->role }}</td>
+                    <td>{{ $partie->typePartiePrenante->libelle ?? '—' }}</td>
                     <td class="text-end">
                         @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
                         <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editPartie{{ $partie->id }}"><i class="bi bi-pencil"></i></button>
@@ -498,7 +597,15 @@
                                     <div class="modal-header"><h6 class="modal-title fw-bold">Modifier la partie prenante</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                                     <div class="modal-body">
                                         <div class="mb-2"><label class="form-label">Groupe d'acteurs</label><input type="text" name="groupe_acteurs" value="{{ $partie->groupe_acteurs }}" class="form-control" required></div>
-                                        <div class="mb-1"><label class="form-label">Rôle</label><input type="text" name="role" value="{{ $partie->role }}" class="form-control"></div>
+                                        <div class="mb-2"><label class="form-label">Rôle</label><input type="text" name="role" value="{{ $partie->role }}" class="form-control"></div>
+                                        <div class="mb-1"><label class="form-label">Type</label>
+                                            <select name="type_partie_prenante_id" class="form-select">
+                                                <option value="">-- Aucun --</option>
+                                                @foreach(\App\Models\TypePartiePrenante::orderBy('libelle')->get() as $tpp)
+                                                    <option value="{{ $tpp->id }}" @selected($partie->type_partie_prenante_id == $tpp->id)>{{ $tpp->libelle }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button><button class="btn text-white" style="background:#FF8200;">Enregistrer</button></div>
                                 </form>
@@ -508,7 +615,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="3" class="text-muted text-center">Aucune partie prenante enregistrée.</td></tr>
+                <tr><td colspan="4" class="text-muted text-center">Aucune partie prenante enregistrée.</td></tr>
                 @endforelse
                 </tbody>
             </table>
@@ -691,6 +798,42 @@
                         @endif
                     </td>
                 </tr>
+                <tr>
+                    <td colspan="7" class="bg-light">
+                        <div class="small fw-semibold text-muted mb-1">Échéanciers AE-CP — {{ $marche->objet }}</div>
+                        <table class="table table-sm table-borderless mb-1">
+                            <thead><tr><th>Année LF</th><th>Montant AE</th><th>Montant CP</th><th></th></tr></thead>
+                            <tbody>
+                            @forelse($marche->echeanciersAeCp as $ech)
+                            <tr>
+                                <td>{{ $ech->annee_lf }}</td>
+                                <td>{{ number_format($ech->montant_ae,0,',',' ') }} FCFA</td>
+                                <td>{{ number_format($ech->montant_cp,0,',',' ') }} FCFA</td>
+                                <td class="text-end">
+                                    @if(auth()->user()->hasRole(['administrateur','responsable_financier']))
+                                    <form action="{{ route('echeanciers-ae-cp.destroy', $ech) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cet échéancier ?');">
+                                        @csrf @method('DELETE')
+                                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                    @endif
+                                </td>
+                            </tr>
+                            @empty
+                            <tr><td colspan="4" class="text-muted">Aucun échéancier AE-CP.</td></tr>
+                            @endforelse
+                            </tbody>
+                        </table>
+                        @if(auth()->user()->hasRole(['administrateur','responsable_financier']))
+                        <form method="POST" action="{{ route('echeanciers-ae-cp.store', $marche) }}" class="row g-2">
+                            @csrf
+                            <div class="col-md-3"><input type="number" min="2000" max="2100" name="annee_lf" class="form-control form-control-sm" placeholder="Année LF" required></div>
+                            <div class="col-md-3"><input type="number" step="0.01" min="0" name="montant_ae" class="form-control form-control-sm" placeholder="Montant AE"></div>
+                            <div class="col-md-3"><input type="number" step="0.01" min="0" name="montant_cp" class="form-control form-control-sm" placeholder="Montant CP"></div>
+                            <div class="col-md-2"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">Ajouter</button></div>
+                        </form>
+                        @endif
+                    </td>
+                </tr>
                 @empty
                 <tr><td colspan="7" class="text-muted text-center">Aucun marché enregistré.</td></tr>
                 @endforelse
@@ -861,6 +1004,430 @@
                 <li class="text-muted">Aucune pièce justificative enregistrée.</li>
                 @endforelse
             </ul>
+        </div>
+    </div>
+
+    {{-- Cadre logique (Objectifs / Résultats attendus) --}}
+    <div class="tab-pane fade" id="cadre-logique">
+        <div class="card card-stat p-3">
+            @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+            <form method="POST" action="{{ route('objectifs.store', $projet) }}" class="row g-2 mb-3">
+                @csrf
+                <div class="col-md-4"><input type="text" name="libelle" class="form-control form-control-sm" placeholder="Libellé de l'objectif" required></div>
+                <div class="col-md-3">
+                    <select name="type_objectif_id" class="form-select form-select-sm">
+                        <option value="">Type d'objectif</option>
+                        @foreach(\App\Models\TypeObjectif::orderBy('libelle')->get() as $to)
+                            <option value="{{ $to->id }}">{{ $to->libelle }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-4"><input type="text" name="description" class="form-control form-control-sm" placeholder="Description"></div>
+                <div class="col-md-1"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">+</button></div>
+            </form>
+            @endif
+            @forelse($projet->objectifs as $objectif)
+            <div class="border rounded p-2 mb-2">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="fw-semibold">{{ $objectif->libelle }}</span>
+                        @if($objectif->typeObjectif)<span class="badge bg-light text-dark border ms-1">{{ $objectif->typeObjectif->libelle }}</span>@endif
+                        <div class="small text-muted">{{ $objectif->description }}</div>
+                    </div>
+                    @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+                    <div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editObjectif{{ $objectif->id }}"><i class="bi bi-pencil"></i></button>
+                        <form action="{{ route('objectifs.destroy', $objectif) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cet objectif (et ses résultats attendus) ?');">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </div>
+                    <div class="modal fade" id="editObjectif{{ $objectif->id }}" tabindex="-1">
+                        <div class="modal-dialog"><div class="modal-content">
+                            <form method="POST" action="{{ route('objectifs.update', $objectif) }}">
+                                @csrf @method('PUT')
+                                <div class="modal-header"><h6 class="modal-title fw-bold">Modifier l'objectif</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                                <div class="modal-body">
+                                    <div class="mb-2"><label class="form-label">Libellé</label><input type="text" name="libelle" value="{{ $objectif->libelle }}" class="form-control" required></div>
+                                    <div class="mb-2"><label class="form-label">Type d'objectif</label>
+                                        <select name="type_objectif_id" class="form-select">
+                                            <option value="">-- Aucun --</option>
+                                            @foreach(\App\Models\TypeObjectif::orderBy('libelle')->get() as $to)
+                                                <option value="{{ $to->id }}" @selected($objectif->type_objectif_id == $to->id)>{{ $to->libelle }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-1"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="2">{{ $objectif->description }}</textarea></div>
+                                </div>
+                                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fermer</button><button class="btn text-white" style="background:#FF8200;">Enregistrer</button></div>
+                            </form>
+                        </div></div>
+                    </div>
+                    @endif
+                </div>
+
+                {{-- Résultats attendus de cet objectif --}}
+                <div class="mt-2 ps-3 border-start">
+                    <div class="small text-muted fw-semibold mb-1">Résultats attendus</div>
+                    <table class="table table-sm mb-1">
+                        <thead><tr><th>Niveau</th><th>Libellé</th><th>Cible</th><th>Réalisé</th><th>Reste à atteindre</th><th></th></tr></thead>
+                        <tbody>
+                        @forelse($objectif->resultatsAttendus as $ra)
+                        <tr>
+                            <td><span class="badge bg-light text-dark border">{{ ucfirst($ra->niveau) }}</span></td>
+                            <td>{{ $ra->libelle }}</td>
+                            <td>{{ $ra->cible }}</td>
+                            <td>{{ $ra->valeur_realisee }}</td>
+                            <td>{{ $ra->reste_a_atteindre }}</td>
+                            <td class="text-end">
+                                @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+                                <form action="{{ route('resultats-attendus.destroy', $ra) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer ce résultat attendu ?');">
+                                    @csrf @method('DELETE')
+                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                                @endif
+                            </td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="6" class="text-muted small">Aucun résultat attendu.</td></tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                    @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+                    <form method="POST" action="{{ route('resultats-attendus.store', $objectif) }}" class="row g-2">
+                        @csrf
+                        <div class="col-md-2">
+                            <select name="niveau" class="form-select form-select-sm" required>
+                                <option value="extrant">Extrant</option>
+                                <option value="effet">Effet</option>
+                                <option value="impact">Impact</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3"><input type="text" name="libelle" class="form-control form-control-sm" placeholder="Libellé" required></div>
+                        <div class="col-md-2"><input type="text" name="situation_reference" class="form-control form-control-sm" placeholder="Situation de référence"></div>
+                        <div class="col-md-2"><input type="text" name="cible" class="form-control form-control-sm" placeholder="Cible"></div>
+                        <div class="col-md-2"><input type="text" name="valeur_realisee" class="form-control form-control-sm" placeholder="Valeur réalisée"></div>
+                        <div class="col-md-1"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">+</button></div>
+                    </form>
+                    @endif
+                </div>
+            </div>
+            @empty
+            <p class="text-muted mb-0">Aucun objectif enregistré.</p>
+            @endforelse
+        </div>
+    </div>
+
+    {{-- Budget --}}
+    <div class="tab-pane fade" id="budget">
+        <div class="card card-stat p-3">
+            @if(auth()->user()->hasRole(['administrateur','responsable_financier']))
+            <form method="POST" action="{{ route('budgets.store', $projet) }}" class="row g-2 mb-3">
+                @csrf
+                <div class="col-md-2"><input type="number" min="2000" max="2100" name="exercice" class="form-control form-control-sm" placeholder="Exercice" required></div>
+                <div class="col-md-2"><input type="number" step="0.01" min="0" name="credit_budgetaire_notifie" class="form-control form-control-sm" placeholder="Crédit notifié"></div>
+                <div class="col-md-2"><input type="number" step="0.01" min="0" name="montant_pec_avant_exercice" class="form-control form-control-sm" placeholder="Montant PEC avant"></div>
+                <div class="col-md-2"><input type="number" step="0.01" min="0" max="100" name="taux_execution_financier" class="form-control form-control-sm" placeholder="Taux exéc. financier %"></div>
+                <div class="col-md-2"><input type="number" step="0.01" min="0" max="100" name="taux_execution_physique" class="form-control form-control-sm" placeholder="Taux exéc. physique %"></div>
+                <div class="col-md-2"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">Ajouter</button></div>
+                <div class="col-md-4"><input type="number" step="0.01" min="0" name="montant_previsionnel_n" class="form-control form-control-sm" placeholder="Prévisionnel N"></div>
+                <div class="col-md-4"><input type="number" step="0.01" min="0" name="montant_previsionnel_n1" class="form-control form-control-sm" placeholder="Prévisionnel N+1"></div>
+                <div class="col-md-4"><input type="number" step="0.01" min="0" name="montant_previsionnel_n2" class="form-control form-control-sm" placeholder="Prévisionnel N+2"></div>
+                <div class="col-md-12"><input type="text" name="observation" class="form-control form-control-sm" placeholder="Observation"></div>
+            </form>
+            @endif
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Exercice</th><th>Crédit notifié</th><th>Taux fin.</th><th>Taux phys.</th><th></th></tr></thead>
+                <tbody>
+                @forelse($projet->budgets as $budget)
+                <tr>
+                    <td>{{ $budget->exercice }}</td>
+                    <td>{{ number_format($budget->credit_budgetaire_notifie,0,',',' ') }} FCFA</td>
+                    <td>{{ $budget->taux_execution_financier }}%</td>
+                    <td>{{ $budget->taux_execution_physique }}%</td>
+                    <td class="text-end">
+                        @if(auth()->user()->hasRole(['administrateur','responsable_financier']))
+                        <form action="{{ route('budgets.destroy', $budget) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cette ligne budgétaire ?');">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="5" class="text-muted text-center">Aucune ligne budgétaire enregistrée.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Portefeuille --}}
+    <div class="tab-pane fade" id="portefeuille">
+        <div class="card card-stat p-3">
+            @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+            <form method="POST" action="{{ route('portefeuilles.store', $projet) }}" class="row g-2 mb-3">
+                @csrf
+                <div class="col-md-4">
+                    <select name="appartenance_pnd" class="form-select form-select-sm" required>
+                        <option value="1">Appartient au portefeuille PND</option>
+                        <option value="0">N'appartient pas au portefeuille PND</option>
+                    </select>
+                </div>
+                <div class="col-md-6"><input type="text" name="libelle_associe" class="form-control form-control-sm" placeholder="Libellé du/des projet(s)/programme(s) associé(s)"></div>
+                <div class="col-md-2"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">Ajouter</button></div>
+            </form>
+            @endif
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Appartenance PND</th><th>Libellé associé</th><th></th></tr></thead>
+                <tbody>
+                @forelse($projet->portefeuilles as $pf)
+                <tr>
+                    <td>{{ $pf->appartenance_pnd ? 'Oui' : 'Non' }}</td>
+                    <td>{{ $pf->libelle_associe }}</td>
+                    <td class="text-end">
+                        @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+                        <form action="{{ route('portefeuilles.destroy', $pf) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cette entrée de portefeuille ?');">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="3" class="text-muted text-center">Aucune entrée de portefeuille enregistrée.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Comités de projet --}}
+    <div class="tab-pane fade" id="comites">
+        <div class="card card-stat p-3">
+            @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+            <form method="POST" action="{{ route('comites-projet.store', $projet) }}" class="row g-2 mb-3">
+                @csrf
+                <div class="col-md-3">
+                    <select name="type" class="form-select form-select-sm" required>
+                        <option value="supervision">Supervision</option>
+                        <option value="pilotage">Pilotage</option>
+                        <option value="technique">Technique</option>
+                        <option value="suivi_evaluation">Suivi-évaluation</option>
+                        <option value="audit_controle">Audit / contrôle</option>
+                    </select>
+                </div>
+                <div class="col-md-3"><input type="text" name="role" class="form-control form-control-sm" placeholder="Rôle"></div>
+                <div class="col-md-3"><input type="text" name="composition" class="form-control form-control-sm" placeholder="Composition"></div>
+                <div class="col-md-2"><input type="text" name="observation" class="form-control form-control-sm" placeholder="Observation"></div>
+                <div class="col-md-1"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">+</button></div>
+            </form>
+            @endif
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Type</th><th>Rôle</th><th>Composition</th><th>Observation</th><th></th></tr></thead>
+                <tbody>
+                @forelse($projet->comitesProjet as $comite)
+                <tr>
+                    <td><span class="badge bg-light text-dark border">{{ str_replace('_',' ',$comite->type) }}</span></td>
+                    <td>{{ $comite->role }}</td>
+                    <td>{{ $comite->composition }}</td>
+                    <td>{{ $comite->observation }}</td>
+                    <td class="text-end">
+                        @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+                        <form action="{{ route('comites-projet.destroy', $comite) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer ce comité ?');">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="5" class="text-muted text-center">Aucun comité de projet enregistré.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Critères d'évaluation --}}
+    <div class="tab-pane fade" id="criteres">
+        <div class="card card-stat p-3">
+            @if(auth()->user()->hasRole(['administrateur','responsable_suivi_evaluation']))
+            <form method="POST" action="{{ route('criteres-evaluation.store', $projet) }}" class="row g-2 mb-3">
+                @csrf
+                <div class="col-md-3"><input type="text" name="critere" class="form-control form-control-sm" placeholder="Critère" required></div>
+                <div class="col-md-3"><input type="text" name="sous_critere" class="form-control form-control-sm" placeholder="Sous-critère"></div>
+                <div class="col-md-2">
+                    <select name="appreciation" class="form-select form-select-sm">
+                        <option value="">Appréciation</option>
+                        <option value="total">Total</option>
+                        <option value="partiel">Partiel</option>
+                        <option value="faible">Faible</option>
+                        <option value="oui">Oui</option>
+                        <option value="non">Non</option>
+                    </select>
+                </div>
+                <div class="col-md-3"><input type="text" name="justification" class="form-control form-control-sm" placeholder="Justification"></div>
+                <div class="col-md-1"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">+</button></div>
+            </form>
+            @endif
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Critère</th><th>Sous-critère</th><th>Appréciation</th><th>Justification</th><th></th></tr></thead>
+                <tbody>
+                @forelse($projet->criteresEvaluation as $critere)
+                <tr>
+                    <td>{{ $critere->critere }}</td>
+                    <td>{{ $critere->sous_critere }}</td>
+                    <td><span class="badge bg-light text-dark border">{{ ucfirst($critere->appreciation) }}</span></td>
+                    <td>{{ $critere->justification }}</td>
+                    <td class="text-end">
+                        @if(auth()->user()->hasRole(['administrateur','responsable_suivi_evaluation']))
+                        <form action="{{ route('criteres-evaluation.destroy', $critere) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer ce critère ?');">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="5" class="text-muted text-center">Aucun critère d'évaluation enregistré.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Opportunités d'emploi --}}
+    <div class="tab-pane fade" id="emplois">
+        <div class="card card-stat p-3">
+            @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+            <form method="POST" action="{{ route('opportunites-emploi.store', $projet) }}" class="row g-2 mb-3">
+                @csrf
+                <div class="col-md-3">
+                    <select name="type_emploi" class="form-select form-select-sm" required>
+                        <option value="direct">Direct</option>
+                        <option value="indirect">Indirect</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="phase" class="form-select form-select-sm" required>
+                        <option value="realisation">Réalisation</option>
+                        <option value="exploitation">Exploitation</option>
+                    </select>
+                </div>
+                <div class="col-md-3"><input type="number" min="0" name="nombre_emplois_prevus" class="form-control form-control-sm" placeholder="Nombre d'emplois prévus"></div>
+                <div class="col-md-2"><input type="number" min="0" name="duree_activite_previsionnelle" class="form-control form-control-sm" placeholder="Durée (mois)"></div>
+                <div class="col-md-1"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">+</button></div>
+            </form>
+            @endif
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Type</th><th>Phase</th><th>Nombre prévu</th><th>Durée (mois)</th><th></th></tr></thead>
+                <tbody>
+                @forelse($projet->opportunitesEmploi as $emploi)
+                <tr>
+                    <td><span class="badge bg-light text-dark border">{{ ucfirst($emploi->type_emploi) }}</span></td>
+                    <td>{{ ucfirst($emploi->phase) }}</td>
+                    <td>{{ $emploi->nombre_emplois_prevus }}</td>
+                    <td>{{ $emploi->duree_activite_previsionnelle }}</td>
+                    <td class="text-end">
+                        @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+                        <form action="{{ route('opportunites-emploi.destroy', $emploi) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cette opportunité d\'emploi ?');">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="5" class="text-muted text-center">Aucune opportunité d'emploi enregistrée.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Analyse causale --}}
+    <div class="tab-pane fade" id="analyse-causale">
+        <div class="card card-stat p-3">
+            @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+            <form method="POST" action="{{ route('analyses-causales.store', $projet) }}" class="row g-2 mb-3">
+                @csrf
+                <div class="col-md-7"><input type="text" name="libelle" class="form-control form-control-sm" placeholder="Cause identifiée" required></div>
+                <div class="col-md-4">
+                    <select name="type_analyse_causale_id" class="form-select form-select-sm">
+                        <option value="">Niveau de la cause</option>
+                        @foreach(\App\Models\TypeAnalyseCausale::orderBy('libelle')->get() as $tac)
+                            <option value="{{ $tac->id }}">{{ $tac->libelle }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-1"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">+</button></div>
+            </form>
+            @endif
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Cause</th><th>Niveau</th><th></th></tr></thead>
+                <tbody>
+                @forelse($projet->analysesCausales as $ac)
+                <tr>
+                    <td>{{ $ac->libelle }}</td>
+                    <td>{{ $ac->typeAnalyseCausale->libelle ?? '—' }}</td>
+                    <td class="text-end">
+                        @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+                        <form action="{{ route('analyses-causales.destroy', $ac) }}" method="POST" class="d-inline" onsubmit="return confirm('Supprimer cette cause ?');">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="3" class="text-muted text-center">Aucune cause identifiée.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Acteurs --}}
+    <div class="tab-pane fade" id="acteurs">
+        <div class="card card-stat p-3">
+            @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+            <form method="POST" action="{{ route('projets.acteurs.attacher', $projet) }}" class="row g-2 mb-3">
+                @csrf
+                <div class="col-md-9">
+                    <select name="acteur_id" class="form-select form-select-sm" required>
+                        <option value="">-- Choisir un acteur --</option>
+                        @foreach(\App\Models\Acteur::orderBy('libelle')->get() as $ac)
+                            <option value="{{ $ac->id }}">{{ $ac->libelle }} @if($ac->groupeActeur) ({{ $ac->groupeActeur->libelle }}) @endif</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3"><button class="btn btn-sm text-white w-100" style="background:#FF8200;">Associer</button></div>
+            </form>
+            <p class="small text-muted">Un acteur n'existe pas encore dans la liste ? <a href="{{ route('acteurs.create') }}">Créez-le ici</a>.</p>
+            @endif
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Libellé</th><th>Rôle</th><th>Groupe d'acteur</th><th></th></tr></thead>
+                <tbody>
+                @forelse($projet->acteurs as $ac)
+                <tr>
+                    <td>{{ $ac->libelle }}</td>
+                    <td>{{ $ac->role }}</td>
+                    <td>{{ $ac->groupeActeur->libelle ?? '—' }}</td>
+                    <td class="text-end">
+                        @if(auth()->user()->hasRole(['administrateur','gestionnaire_projet']))
+                        <form action="{{ route('projets.acteurs.detacher', [$projet, $ac]) }}" method="POST" class="d-inline" onsubmit="return confirm('Retirer cet acteur du projet ?');">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="4" class="text-muted text-center">Aucun acteur associé.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

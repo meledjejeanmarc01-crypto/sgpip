@@ -13,7 +13,8 @@ class Projet extends Model
         'action_pnd', 'programme_budgetaire', 'odd_concerne', 'domaine_impact_socio_eco',
         'milieu_execution', 'type_projet',
         'cible_trimestre_1', 'cible_trimestre_2', 'cible_trimestre_3', 'cible_trimestre_4',
-        'code_pjgouv', 'code_psgouv',
+        'code_pjgouv', 'code_psgouv', 'appartenance', 'probleme', 'attentes_projet', 'craintes_projet',
+        'taille', 'observations',
         'structure_id', 'secteur_id', 'zone_localisation_id', 'axe_id',
     ];
 
@@ -114,6 +115,46 @@ class Projet extends Model
     public function objectifsSpecifiques()
     {
         return $this->hasMany(ObjectifSpecifique::class);
+    }
+
+    public function objectifs()
+    {
+        return $this->hasMany(Objectif::class);
+    }
+
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class);
+    }
+
+    public function portefeuilles()
+    {
+        return $this->hasMany(Portefeuille::class);
+    }
+
+    public function comitesProjet()
+    {
+        return $this->hasMany(ComiteProjet::class);
+    }
+
+    public function criteresEvaluation()
+    {
+        return $this->hasMany(CritereEvaluation::class);
+    }
+
+    public function opportunitesEmploi()
+    {
+        return $this->hasMany(OpportuniteEmploi::class);
+    }
+
+    public function analysesCausales()
+    {
+        return $this->hasMany(AnalyseCausale::class);
+    }
+
+    public function acteurs()
+    {
+        return $this->belongsToMany(Acteur::class, 'acteur_projet');
     }
 
     public function getMontantEngageAttribute(): float

@@ -2,7 +2,7 @@
     <div class="col-md-6 mb-3">
         <label class="form-label">Type de zone</label>
         <select name="type" class="form-select" required>
-            @foreach(['district'=>'District','region'=>'Région','departement'=>'Département','sous_prefecture'=>'Sous-préfecture','commune'=>'Commune','localite'=>'Localité'] as $val => $label)
+            @foreach(['district'=>'District','region'=>'Région','departement'=>'Département','sous_prefecture'=>'Sous-préfecture','commune'=>'Commune','localite'=>'Localité','village'=>'Village','hors_ci'=>'Hors Côte d\'Ivoire'] as $val => $label)
                 <option value="{{ $val }}" @selected(old('type', $zone->type ?? '') == $val)>{{ $label }}</option>
             @endforeach
         </select>

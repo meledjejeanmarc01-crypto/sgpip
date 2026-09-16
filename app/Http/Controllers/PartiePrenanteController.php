@@ -13,6 +13,7 @@ class PartiePrenanteController extends Controller
         $data = $request->validate([
             'groupe_acteurs' => 'required|string|max:255',
             'role' => 'nullable|string|max:255',
+            'type_partie_prenante_id' => 'nullable|exists:types_partie_prenante,id',
         ]);
         $data['projet_id'] = $projet->id;
         PartiePrenante::create($data);
@@ -24,6 +25,7 @@ class PartiePrenanteController extends Controller
         $data = $request->validate([
             'groupe_acteurs' => 'required|string|max:255',
             'role' => 'nullable|string|max:255',
+            'type_partie_prenante_id' => 'nullable|exists:types_partie_prenante,id',
         ]);
         $partiePrenante->update($data);
         return back()->with('success', 'Partie prenante mise à jour.');

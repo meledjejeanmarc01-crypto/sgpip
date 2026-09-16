@@ -17,4 +17,9 @@ class Marche extends Model
     {
         return $this->belongsTo(Projet::class);
     }
+
+    public function echeanciersAeCp()
+    {
+        return $this->hasMany(EcheancierAeCp::class, 'marche_id');
+    }
 }

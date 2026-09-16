@@ -68,6 +68,7 @@ class FinancementController extends Controller
             'montant_engage' => 'required|numeric|min:0',
             'date' => 'required|date',
             'reference' => 'required|string|max:50|unique:financements,reference,'.$ignoreId,
+            'type_source' => 'nullable|in:tresor,emprunt,don,participation_collectivites,participation_populations,participation_secteur_prive,ppp,fonds_propres_parapublics',
             'projet_id' => 'required|exists:projets,id',
             'source_type' => 'required|in:bailleur,etat',
             'bailleur_id' => 'required_if:source_type,bailleur|nullable|exists:bailleurs,id',
