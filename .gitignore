@@ -25,3 +25,18 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Sauvegardes et archives
+*.sql
+*.zip
+
+# Fichiers de travail
+routes.txt
+FICHIERS_A_SUPPRIMER.txt
+*.sauvegarde*
+patch_*.ps1
+remplacer_ministere.ps1
+
+# Copies parasites
+/routes/public
+/routes/storage
