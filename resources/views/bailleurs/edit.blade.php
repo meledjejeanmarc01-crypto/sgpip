@@ -6,7 +6,7 @@
     <form method="POST" action="{{ route('bailleurs.update', $bailleur) }}">
         @csrf @method('PUT')
         @include('bailleurs.form')
-        <button class="btn text-white" style="background:#FF8200;">Mettre à jour</button>
+        <button class="btn btn-brand">Mettre à jour</button>
         <a href="{{ route('bailleurs.index') }}" class="btn btn-outline-secondary">Annuler</a>
     </form>
 </div>

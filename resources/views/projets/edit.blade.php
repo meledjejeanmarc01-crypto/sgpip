@@ -6,7 +6,8 @@
     <form method="POST" action="{{ route('projets.update', $projet) }}">
         @csrf @method('PUT')
         @include('projets.form')
-        <button class="btn text-white" style="background:#FF8200;">Mettre à jour</button>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+        <button class="btn btn-brand">Mettre à jour</button>
         <a href="{{ route('projets.show', $projet) }}" class="btn btn-outline-secondary">Annuler</a>
     </form>
 </div>

@@ -2,154 +2,106 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Commune;
-use App\Models\Departement;
-use App\Models\District;
-use App\Models\Localite;
-use App\Models\Region;
-use App\Models\SousPrefecture;
+use App\Models\Localisation;
+use App\Models\NiveauLocalisation;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class LocalisationAdminController extends Controller
 {
     /**
-     * Page de gestion de la hiérarchie géographique.
+     * Page de gestion de la hiérarchie géographique :
+     * District -> Région -> Département -> Commune -> Sous-préfecture -> Village
+     * (une seule table "localisations", chaque ligne porte directement une colonne
+     * par niveau d'ancêtre : district_id, region_id, departement_id, commune_id,
+     * sous_prefecture_id).
      */
-    public function index()
+    public function index(Request $request)
     {
-        $districts = District::withCount('regions')->orderBy('nom')->get();
-        $regions = Region::with('district')->orderBy('nom')->get();
-        $departements = Departement::with('region')->orderBy('nom')->get();
-        $sousPrefectures = SousPrefecture::with('departement')->orderBy('nom')->get();
-        $communes = Commune::with('departement')->orderBy('nom')->get();
-        $localites = Localite::with('commune.departement.region.district')->orderBy('nom')->get();
+        $niveaux = NiveauLocalisation::orderBy('id')->get();
 
-        return view('localisation.index', compact(
-            'districts', 'regions', 'departements', 'sousPrefectures', 'communes', 'localites'
-        ));
+        $localisations = Localisation::query()
+            ->with('niveau', 'district', 'region', 'departement', 'commune', 'sousPrefecture', 'zoneExecution')
+            ->when($request->filled('niveau_id'), fn ($q) => $q->where('niveau_id', $request->niveau_id))
+            ->when($request->filled('q'), fn ($q) => $q->where('libelle', 'like', '%'.$request->q.'%'))
+            ->orderBy('niveau_id')
+            ->orderBy('libelle')
+            ->paginate(25)
+            ->withQueryString();
+
+        return view('localisation.index', compact('niveaux', 'localisations'));
     }
 
-    public function storeDistrict(Request $request)
+    public function store(Request $request)
     {
         $data = $request->validate([
-            'nom' => ['required', 'string', 'max:255', 'unique:districts,nom'],
+            'niveau_id' => ['required', 'exists:niveau_localisations,id'],
+            'parent_id' => ['nullable', 'exists:localisations,id'],
+            'libelle' => ['required', 'string', 'max:255'],
+            'code' => ['nullable', 'string', 'max:50', 'unique:localisations,code'],
             'description' => ['nullable', 'string'],
+            'milieu' => ['nullable', 'in:urbain,rural'],
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
         ]);
 
-        District::create($data);
+        $niveauId = (int) $data['niveau_id'];
+        $parent = null;
 
-        return back()->with('success', 'District ajouté avec succès.');
-    }
+        if ($niveauId === NiveauLocalisation::DISTRICT) {
+            // RG45 : un district n'a pas d'ancêtre.
+            if (!empty($data['parent_id'])) {
+                throw ValidationException::withMessages(['parent_id' => "Un district n'a pas d'ancêtre."]);
+            }
+        } else {
+            // RG44/RG45 : toute autre localisation a un ancêtre immédiat du niveau juste au-dessus.
+            if (empty($data['parent_id'])) {
+                throw ValidationException::withMessages(['parent_id' => 'Cette localisation doit avoir une localisation parente.']);
+            }
+            $parent = Localisation::with('niveau')->findOrFail($data['parent_id']);
+            if ($parent->niveau_id !== $niveauId - 1) {
+                $attendu = NiveauLocalisation::find($niveauId - 1)?->libelle;
+                throw ValidationException::withMessages(['parent_id' => "Le parent doit être du niveau « {$attendu} »."]);
+            }
+        }
 
-    public function destroyDistrict(District $district)
-    {
-        $district->delete();
+        $colonneDuParent = $niveauId > 1
+            ? Localisation::niveauVersColonne($niveauId - 1)
+            : null;
 
-        return back()->with('success', 'District supprimé (ainsi que ses régions, départements, communes et localités).');
-    }
+        $existeDejaExiste = Localisation::where('niveau_id', $niveauId)
+            ->where('libelle', $data['libelle'])
+            ->when($colonneDuParent, fn ($q) => $q->where($colonneDuParent, $parent?->id))
+            ->exists();
+        if ($existeDejaExiste) {
+            throw ValidationException::withMessages(['libelle' => 'Cette localisation existe déjà sous le même parent.']);
+        }
 
-    public function storeRegion(Request $request)
-    {
-        $data = $request->validate([
-            'district_id' => ['required', 'exists:districts,id'],
-            'nom' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+        Localisation::creerSous($niveauId, $parent, [
+            'libelle' => $data['libelle'],
+            'code' => $data['code'] ?? null,
+            'description' => $data['description'] ?? null,
+            'milieu' => $data['milieu'] ?? null,
+            'localisation_parent_id' => $parent?->id,
+            'latitude' => $data['latitude'] ?? null,
+            'longitude' => $data['longitude'] ?? null,
         ]);
 
-        Region::create($data);
-
-        return back()->with('success', 'Région ajoutée avec succès.');
+        return back()->with('success', 'Localisation ajoutée avec succès.');
     }
 
-    public function destroyRegion(Region $region)
+    public function destroy(Localisation $localisation)
     {
-        $region->delete();
+        // RG47 : une localisation qui a des enfants ou une zone d'exécution ne peut pas être supprimée.
+        if ($localisation->aDesEnfants()) {
+            return back()->with('error', 'Impossible de supprimer : cette localisation a des localisations enfants.');
+        }
+        if ($localisation->zoneExecution()->exists()) {
+            return back()->with('error', "Impossible de supprimer : une zone d'exécution est rattachée à cette localisation.");
+        }
 
-        return back()->with('success', 'Région supprimée.');
-    }
+        $localisation->delete();
 
-    public function storeDepartement(Request $request)
-    {
-        $data = $request->validate([
-            'region_id' => ['required', 'exists:regions,id'],
-            'nom' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-        ]);
-
-        Departement::create($data);
-
-        return back()->with('success', 'Département ajouté avec succès.');
-    }
-
-    public function destroyDepartement(Departement $departement)
-    {
-        $departement->delete();
-
-        return back()->with('success', 'Département supprimé.');
-    }
-
-    public function storeSousPrefecture(Request $request)
-    {
-        $data = $request->validate([
-            'departement_id' => ['required', 'exists:departements,id'],
-            'nom' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-        ]);
-
-        SousPrefecture::create($data);
-
-        return back()->with('success', 'Sous-préfecture ajoutée avec succès.');
-    }
-
-    public function destroySousPrefecture(SousPrefecture $sousPrefecture)
-    {
-        $sousPrefecture->delete();
-
-        return back()->with('success', 'Sous-préfecture supprimée.');
-    }
-
-    public function storeCommune(Request $request)
-    {
-        $data = $request->validate([
-            'departement_id' => ['required', 'exists:departements,id'],
-            'nom' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-        ]);
-
-        Commune::create($data);
-
-        return back()->with('success', 'Commune ajoutée avec succès.');
-    }
-
-    public function destroyCommune(Commune $commune)
-    {
-        $commune->delete();
-
-        return back()->with('success', 'Commune supprimée.');
-    }
-
-    public function storeLocalite(Request $request)
-    {
-        $data = $request->validate([
-            'commune_id' => ['required', 'exists:communes,id'],
-            'nom' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'latitude' => ['required', 'numeric', 'between:-90,90'],
-            'longitude' => ['required', 'numeric', 'between:-180,180'],
-        ], [], [
-            'latitude' => 'latitude',
-            'longitude' => 'longitude',
-        ]);
-
-        Localite::create($data);
-
-        return back()->with('success', 'Localité ajoutée avec succès. Elle apparaîtra sur la carte dès qu\'un projet lui sera associé.');
-    }
-
-    public function destroyLocalite(Localite $localite)
-    {
-        $localite->delete();
-
-        return back()->with('success', 'Localité supprimée.');
+        return back()->with('success', 'Localisation supprimée.');
     }
 }

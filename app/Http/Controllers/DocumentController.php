@@ -11,11 +11,14 @@ class DocumentController extends Controller
 {
     public function index(Request $request)
     {
-        $documents = Document::with(['projet', 'ajoutePar'])
+        $requete = Document::with(['projet', 'ajoutePar'])
             ->when($request->filled('projet_id'), fn ($q) => $q->where('projet_id', $request->projet_id))
-            ->latest()
-            ->paginate(15)
-            ->withQueryString();
+            ->latest();
+
+        // Impression du registre : tous les documents du filtre (pas seulement la page de 15).
+        $documents = $request->boolean('imprimer')
+            ? $requete->get()
+            : $requete->paginate(15)->withQueryString();
 
         $projets = Projet::orderBy('intitule')->get(['id', 'intitule', 'reference']);
 
@@ -27,6 +30,9 @@ class DocumentController extends Controller
         $validated = $request->validate([
             'titre' => ['required', 'string', 'max:255'],
             'type' => ['nullable', 'string', 'max:100'],
+            'type_document_id' => ['nullable', 'exists:types_document,id'],
+            'source' => ['nullable', 'string', 'max:255'],
+            'strategie' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'fichier' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx', 'max:5120'],
         ]);
@@ -36,7 +42,10 @@ class DocumentController extends Controller
 
         $projet->documents()->create([
             'titre' => $validated['titre'],
-            'type' => $validated['type'] ?? null,
+            'type' => $validated['type'] ?? (isset($validated['type_document_id']) ? \App\Models\TypeDocument::whereKey($validated['type_document_id'])->value('libelle') : null),
+            'type_document_id' => $validated['type_document_id'] ?? null,
+            'source' => $validated['source'] ?? null,
+            'strategie' => $validated['strategie'] ?? null,
             'description' => $validated['description'] ?? null,
             'fichier' => $chemin,
             'taille' => $fichier->getSize(),

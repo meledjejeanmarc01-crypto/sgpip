@@ -11,7 +11,7 @@
         <div class="card card-stat p-3">
             <h6 class="fw-bold">Financements ({{ $bailleur->financements->count() }})</h6>
             <table class="table table-sm mb-0">
-                <thead><tr><th>Référence</th><th>Projet</th><th>Montant engagé</th></tr></thead>
+                <thead><tr><th>Référence</th><th>Projet</th><th>Montant financé</th></tr></thead>
                 <tbody>
                 @foreach($bailleur->financements as $f)
                     <tr><td>{{ $f->reference }}</td><td>{{ $f->projet->intitule ?? '—' }}</td><td>{{ number_format($f->montant_engage,0,',',' ') }} FCFA</td></tr>

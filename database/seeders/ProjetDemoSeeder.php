@@ -6,17 +6,16 @@ use App\Models\Activite;
 use App\Models\Bailleur;
 use App\Models\Decaissement;
 use App\Models\Depense;
-use App\Models\Etat;
 use App\Models\FichePip;
 use App\Models\Financement;
 use App\Models\Indicateur;
-use App\Models\PieceJustificative;
 use App\Models\Projet;
 use App\Models\Rapport;
 use App\Models\Secteur;
 use App\Models\Structure;
 use App\Models\Tache;
 use App\Models\User;
+use App\Models\Localisation;
 use App\Models\ZoneLocalisation;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -144,7 +143,6 @@ class ProjetDemoSeeder extends Seeder
     public function run(): void
     {
         $bailleurs = Bailleur::orderBy('id')->get();
-        $etat = Etat::first();
         $gestionnaire = User::where('email', 'i.gbane@plan.gouv.ci')->first();
         $financier = User::where('email', 'i.diarra@plan.gouv.ci')->first();
         $suivi = User::where('email', 'i.yapo@plan.gouv.ci')->first();
@@ -155,11 +153,21 @@ class ProjetDemoSeeder extends Seeder
 
         $statutsCycle = ['en_cours', 'planifie', 'termine', 'retarde', 'en_cours', 'suspendu', 'en_cours', 'planifie', 'termine', 'en_cours'];
         $typesRapport = ['trimestriel', 'avancement', 'financier', 'suivi'];
-        $categoriesPiece = ['facture', 'contrat', 'proces_verbal'];
 
         foreach ($this->items as $i => $item) {
             $secteur = Secteur::where('libelle', $item['secteur'])->first();
-            $zone = ZoneLocalisation::where('libelle', $item['zone'])->first();
+            // RG42 : la zone est rattachée à la localisation de même libellé (la plus haute
+            // dans la hiérarchie, et pas déjà utilisée par une autre zone).
+            $zone = ZoneLocalisation::firstOrCreate(
+                ['libelle' => $item['zone']],
+                [
+                    'pays' => "Côte d'Ivoire",
+                    'localisation_id' => Localisation::where('libelle', $item['zone'])
+                        ->whereDoesntHave('zoneExecution')
+                        ->orderBy('niveau_id')
+                        ->value('id'),
+                ]
+            );
             $sigleStructure = $this->secteurStructure[$item['secteur']] ?? 'MIE';
             $structure = Structure::where('sigle', $sigleStructure)->first();
 
@@ -212,8 +220,11 @@ class ProjetDemoSeeder extends Seeder
                 'statut' => $statut,
                 'structure_id' => $structure->id,
                 'secteur_id' => $secteur->id,
-                'zone_localisation_id' => $zone->id,
+                'type_projet' => 'investissement',
             ]);
+
+            // RG41 : rattachement plusieurs-à-plusieurs à la (aux) zone(s) d'exécution.
+            $projet->zonesExecution()->sync([$zone->id]);
 
             // Association ponctuelle à une fiche PIP existante, selon le secteur
             if ($fichePipInfra && str_contains($item['secteur'], 'Infrastructure')) {
@@ -232,37 +243,36 @@ class ProjetDemoSeeder extends Seeder
                 'date' => $dateDebut,
                 'projet_id' => $projet->id,
             ];
-            if ($i % 3 === 0 || $bailleurs->isEmpty()) {
-                $financementData['etat_id'] = $etat?->id;
-            } else {
+            if (! $bailleurs->isEmpty()) {
                 $financementData['bailleur_id'] = $bailleurs[$i % $bailleurs->count()]->id;
             }
             $financement = Financement::create($financementData);
 
-            // --- Décaissement (sauf pour les projets simplement planifiés) ---
-            $depense = null;
-            if ($statut !== 'planifie') {
-                $montantDecaisse = (int) round($montantEngage * ($avancement / 100) * 0.95);
-                $bailleurDecaissement = $financementData['bailleur_id'] ?? optional($bailleurs->first())->id;
-                if ($bailleurDecaissement) {
-                    Decaissement::create([
-                        'reference' => sprintf('DEC-2026-%03d', $i + 1),
-                        'montant' => max($montantDecaisse, 1_000_000),
-                        'date' => (clone $dateDebut)->addMonths(2),
-                        'bailleur_id' => $bailleurDecaissement,
-                        'financement_id' => $financement->id,
-                    ]);
-                }
+            // --- Décaissement et dépense : toujours financé > décaissé > dépensé ---
+            // Taux de décaissement lié à l'avancement (entre 8 % et 92 % du montant financé),
+            // puis dépenses comprises entre 80 % et 92 % du montant décaissé.
+            $tauxDecaissement = min(0.92, max(0.08, ($avancement / 100) * 0.95));
+            $montantDecaisse = (int) round($montantEngage * $tauxDecaissement);
+            $montantDepense = (int) round($montantDecaisse * (0.80 + (($i % 4) * 0.04)));
 
-                // --- Dépense ---
-                $depense = Depense::create([
-                    'reference' => sprintf('DEP-2026-%03d', $i + 1),
-                    'libelle' => 'Travaux et acquisitions - '.Str::limit($item['intitule'], 80, ''),
-                    'montant' => (int) round($montantEngage * 0.55),
-                    'date' => (clone $dateDebut)->addMonths(3),
-                    'projet_id' => $projet->id,
+            $bailleurDecaissement = $financementData['bailleur_id'] ?? optional($bailleurs->first())->id;
+            if ($bailleurDecaissement) {
+                Decaissement::create([
+                    'reference' => sprintf('DEC-2026-%03d', $i + 1),
+                    'montant' => $montantDecaisse,
+                    'date' => (clone $dateDebut)->addMonths(2),
+                    'bailleur_id' => $bailleurDecaissement,
+                    'financement_id' => $financement->id,
                 ]);
             }
+
+            $depense = Depense::create([
+                'reference' => sprintf('DEP-2026-%03d', $i + 1),
+                'libelle' => 'Travaux et acquisitions - '.Str::limit($item['intitule'], 80, ''),
+                'montant' => $montantDepense,
+                'date' => (clone $dateDebut)->addMonths(3),
+                'projet_id' => $projet->id,
+            ]);
 
             // --- Activités, tâches, indicateurs ---
             $nbActivites = ($i % 2 === 0) ? 2 : 1;
@@ -325,16 +335,6 @@ class ProjetDemoSeeder extends Seeder
                 ]);
             }
 
-            // --- Pièce justificative (projets ayant une activité financière) ---
-            if ($statut !== 'planifie' && $financier) {
-                PieceJustificative::create([
-                    'fichier' => 'pieces-justificatives/piece-justificative-demo.pdf',
-                    'categorie' => $categoriesPiece[$i % count($categoriesPiece)],
-                    'libelle' => 'Pièce relative à : '.Str::limit($item['intitule'], 60, ''),
-                    'projet_id' => $projet->id,
-                    'utilisateur_id' => $financier->id,
-                ]);
-            }
         }
     }
 }

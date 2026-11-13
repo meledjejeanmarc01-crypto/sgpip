@@ -13,12 +13,14 @@ class DatabaseSeeder extends Seeder
             TypeStructureSeeder::class,
             StructureSeeder::class,
             SecteurSeeder::class,
+            NiveauLocalisationSeeder::class,
             ZoneLocalisationSeeder::class,
-            EtatSeeder::class,
+            LocalisationCoordinatesSeeder::class,
             TypeBailleurSeeder::class,
             BailleurSeeder::class,
             ProgrammeFichePipSeeder::class,
             ProjetDemoSeeder::class,
+            CahierDesChargesCompletSeeder::class,
         ]);
     }
 }

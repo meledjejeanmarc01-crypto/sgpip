@@ -18,6 +18,8 @@ class EtudeController extends Controller
             'date_demarrage' => 'nullable|date',
             'duree' => 'nullable|string|max:100',
             'etat_execution' => 'nullable|string|max:255',
+            'type_etude' => 'nullable|string|max:255',
+            'date_realisation' => 'nullable|date',
         ]);
         $data['projet_id'] = $projet->id;
         Etude::create($data);
@@ -34,6 +36,8 @@ class EtudeController extends Controller
             'date_demarrage' => 'nullable|date',
             'duree' => 'nullable|string|max:100',
             'etat_execution' => 'nullable|string|max:255',
+            'type_etude' => 'nullable|string|max:255',
+            'date_realisation' => 'nullable|date',
         ]);
         $etude->update($data);
         return back()->with('success', 'Étude mise à jour.');

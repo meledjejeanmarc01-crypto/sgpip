@@ -6,7 +6,7 @@
     <form method="POST" action="{{ route('structures.update', $structure) }}">
         @csrf @method('PUT')
         @include('structures.form')
-        <button class="btn text-white" style="background:#FF8200;">Mettre à jour</button>
+        <button class="btn btn-brand">Mettre à jour</button>
         <a href="{{ route('structures.index') }}" class="btn btn-outline-secondary">Annuler</a>
     </form>
 </div>

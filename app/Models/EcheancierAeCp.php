@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// Volet de la fiche projet (canevas du Ministère) : table « echeanciers_ae_cp ».
 class EcheancierAeCp extends Model
 {
     protected $table = 'echeanciers_ae_cp';
+
     protected $fillable = ['annee_lf', 'montant_ae', 'montant_cp', 'marche_id'];
 
     public function marche()

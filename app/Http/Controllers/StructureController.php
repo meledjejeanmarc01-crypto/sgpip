@@ -27,7 +27,13 @@ class StructureController extends Controller
     public function store(Request $request)
     {
         $data = $this->validateData($request);
-        Structure::create($data);
+        $structure = Structure::create($data);
+
+        // Création rapide depuis le formulaire de projet (réponse JSON, sans quitter la page).
+        if ($request->wantsJson()) {
+            return response()->json(['id' => $structure->id, 'libelle' => $structure->libelle, 'sigle' => $structure->sigle], 201);
+        }
+
         return redirect()->route('structures.index')->with('success', 'Structure créée avec succès.');
     }
 
@@ -66,6 +72,7 @@ class StructureController extends Controller
             'sigle' => 'nullable|string|max:50',
             'adresse' => 'nullable|string|max:255',
             'telephone' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:255',
             'type_structure_id' => 'required|exists:types_structure,id',
         ]);
     }

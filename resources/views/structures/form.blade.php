@@ -9,7 +9,7 @@
     </div>
     <div class="col-md-6 mb-3">
         <label class="form-label">Type de structure</label>
-        <select name="type_structure_id" class="form-select" required>
+        <select name="type_structure_id" class="form-select" required data-creer-url="{{ route('types-structure.store') }}" data-creer-nom="Nom du nouveau type de structure">
             <option value="">-- Choisir --</option>
             @foreach($types as $t)
                 <option value="{{ $t->id }}" @selected(old('type_structure_id', $structure->type_structure_id ?? '') == $t->id)>{{ $t->libelle }}</option>
@@ -24,4 +24,8 @@
 <div class="mb-3">
     <label class="form-label">Téléphone</label>
     <input type="text" name="telephone" value="{{ old('telephone', $structure->telephone ?? '') }}" class="form-control">
+</div>
+<div class="mb-3">
+    <label class="form-label">E-mail (notification des décisions sur les projets)</label>
+    <input type="email" name="email" value="{{ old('email', $structure->email ?? '') }}" class="form-control">
 </div>

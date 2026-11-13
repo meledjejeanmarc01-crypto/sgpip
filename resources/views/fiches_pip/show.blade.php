@@ -5,6 +5,7 @@
     <h5 class="fw-bold">{{ $fiche->nom }} <span class="text-muted">({{ $fiche->numero }})</span></h5>
     <p class="text-muted mb-0">Programme : <a href="{{ route('programmes.show', $fiche->programme) }}">{{ $fiche->programme->nom ?? '—' }}</a></p>
 </div>
+@if(auth()->user()->peutModifier('fiches-pip'))
 <div class="card card-stat p-3">
     <h6 class="fw-bold mb-3">Associer des projets à cette fiche</h6>
     <form method="POST" action="{{ route('fiches-pip.associer', $fiche) }}">
@@ -17,7 +18,8 @@
             </select>
             <div class="form-text">Maintenez Ctrl (ou Cmd) enfoncé pour sélectionner plusieurs projets.</div>
         </div>
-        <button class="btn btn-sm text-white" style="background:#FF8200;">Mettre à jour les associations</button>
+        <button class="btn btn-sm btn-brand">Mettre à jour les associations</button>
     </form>
 </div>
+@endif
 @endsection

@@ -6,10 +6,14 @@
     <div class="col-md-3 mb-3">
         <label class="form-label">Type</label>
         <select name="type" class="form-select" required>
-            @foreach(['avancement'=>'Avancement','financier'=>'Financier','physique'=>'Physique','suivi'=>'Suivi','annuel'=>'Annuel','trimestriel'=>'Trimestriel','mensuel'=>'Mensuel','synthese'=>'Synthèse','execution'=>'Exécution'] as $val=>$label)
-                <option value="{{ $val }}" @selected(old('type', $rapport->type ?? '') == $val)>{{ $label }}</option>
+            @foreach(['avancement'=>'Avancement','financier'=>'Financier','physique'=>'Physique','suivi'=>'Suivi','annuel'=>'Annuel','trimestriel'=>'Trimestriel','mensuel'=>'Mensuel','synthese'=>'Synthèse','execution'=>'Exécution','cloture'=>'Clôture'] as $val=>$label)
+                <option value="{{ $val }}" @selected(old('type', $rapport->type ?? request('type', '')) == $val)>{{ $label }}</option>
             @endforeach
         </select>
+    </div>
+    <div class="col-md-3 mb-3">
+        <label class="form-label">Période</label>
+        <input type="text" name="periode" value="{{ old('periode', $rapport->periode ?? '') }}" class="form-control" placeholder="ex : T2 2026">
     </div>
     <div class="col-md-3 mb-3">
         <label class="form-label">Date</label>

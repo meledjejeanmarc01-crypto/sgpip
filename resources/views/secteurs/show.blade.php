@@ -13,7 +13,9 @@
             <h2 class="fw-bold mb-1"><i class="bi bi-diagram-3"></i> {{ $secteur->libelle }}</h2>
         </div>
         <div class="d-flex gap-2">
+            @if(auth()->user()->peutModifier('secteurs'))
             <a href="{{ route('secteurs.edit', $secteur) }}" class="btn btn-outline-warning"><i class="bi bi-pencil"></i> Modifier</a>
+            @endif
             <a href="{{ route('secteurs.index') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour</a>
         </div>
     </div>

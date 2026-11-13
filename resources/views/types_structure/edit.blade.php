@@ -9,7 +9,7 @@
             <label class="form-label">Libellé</label>
             <input type="text" name="libelle" value="{{ old('libelle', $type->libelle) }}" class="form-control" required>
         </div>
-        <button class="btn text-white" style="background:#FF8200;">Mettre à jour</button>
+        <button class="btn btn-brand">Mettre à jour</button>
         <a href="{{ route('types-structure.index') }}" class="btn btn-outline-secondary">Annuler</a>
     </form>
 </div>

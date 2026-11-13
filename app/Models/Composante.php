@@ -22,4 +22,10 @@ class Composante extends Model
     {
         return $this->hasMany(Activite::class);
     }
+
+    /** Projet auquel cet élément est rattaché. */
+    public function projetAssocie(): ?Projet
+    {
+        return $this->projet;
+    }
 }

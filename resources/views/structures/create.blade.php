@@ -6,7 +6,7 @@
     <form method="POST" action="{{ route('structures.store') }}">
         @csrf
         @include('structures.form')
-        <button class="btn text-white" style="background:#FF8200;">Enregistrer</button>
+        <button class="btn btn-brand">Enregistrer</button>
         <a href="{{ route('structures.index') }}" class="btn btn-outline-secondary">Annuler</a>
     </form>
 </div>

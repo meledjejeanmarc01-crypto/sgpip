@@ -33,8 +33,64 @@ class ProgrammeController extends Controller
 
     public function show(Programme $programme)
     {
-        $programme->load('structure', 'fichesPip.projets', 'axes');
-        return view('programmes.show', compact('programme'));
+        $programme->load(
+            'structure',
+            'axes.projets.secteur',
+            'axes.projets.zonesExecution.localisation.niveau',
+            'axes.projets.zonesExecution.localisation.region',
+            'axes.projets.zonesExecution.paysEtranger',
+            'fichesPip.projets.secteur',
+            'fichesPip.projets.zonesExecution.localisation.niveau',
+            'fichesPip.projets.zonesExecution.localisation.region',
+            'fichesPip.projets.zonesExecution.paysEtranger',
+        );
+
+        // Un projet est rattaché au programme via son axe ou via une fiche PIP (les deux
+        // chemins prévus par le cahier des charges) ; on fusionne et on déduplique.
+        $projets = $programme->axes->flatMap->projets
+            ->merge($programme->fichesPip->flatMap->projets)
+            ->unique('id')
+            ->sortBy('intitule')
+            ->values();
+
+        // Avancement moyen du programme = moyenne de l'avancement physique de tous ses projets.
+        $avancementProgramme = $projets->count() ? round($projets->avg('avancement_physique'), 1) : null;
+
+        // Avancement par région : un projet compte dans chaque région où il a une zone
+        // d'exécution (un projet avec des zones dans 2 régions compte dans les deux).
+        $projetsParRegion = collect();
+        foreach ($projets as $projet) {
+            $libellesRegions = $projet->zonesExecution
+                ->map(function ($zone) {
+                    if ($zone->paysEtranger) {
+                        return "Hors Côte d'Ivoire";
+                    }
+                    $localisation = $zone->localisation;
+                    if (!$localisation) {
+                        return null;
+                    }
+
+                    return $localisation->region_effective?->libelle
+                        ?? $localisation->libelle.' (échelle district)';
+                })
+                ->filter()
+                ->unique();
+
+            foreach ($libellesRegions as $libelle) {
+                $projetsParRegion[$libelle] = ($projetsParRegion[$libelle] ?? collect())->push($projet);
+            }
+        }
+
+        $statsParRegion = $projetsParRegion
+            ->map(fn ($liste, $region) => [
+                'region' => $region,
+                'nb_projets' => $liste->count(),
+                'avancement' => round($liste->avg('avancement_physique'), 1),
+            ])
+            ->sortByDesc('nb_projets')
+            ->values();
+
+        return view('programmes.show', compact('programme', 'projets', 'avancementProgramme', 'statsParRegion'));
     }
 
     public function edit(Programme $programme)
@@ -64,6 +120,7 @@ class ProgrammeController extends Controller
         return $request->validate([
             'nom' => 'required|string|max:255',
             'libelle' => 'nullable|string|max:255',
+            'axe_strategique' => 'nullable|string|max:255',
             'code' => 'required|string|max:50|unique:programmes,code,'.$request->route('programme')?->id,
             'date_debut' => 'nullable|date',
             'date_fin' => 'nullable|date|after_or_equal:date_debut',

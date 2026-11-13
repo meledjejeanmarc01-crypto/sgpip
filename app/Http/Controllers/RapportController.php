@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Projet;
 use App\Models\Rapport;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
 
 class RapportController extends Controller
@@ -22,13 +23,17 @@ class RapportController extends Controller
 
     public function create()
     {
-        $projets = Projet::orderBy('intitule')->get();
+        $projets = $this->projetsAccessibles();
         return view('rapports.create', compact('projets'));
     }
 
     public function store(Request $request)
     {
         $data = $this->validateData($request);
+
+        // RG17 : on ne crée un rapport que pour un projet que l'on gère.
+        $this->autoriserProjet((int) $data['projet_id']);
+
         $data['utilisateur_id'] = $request->user()->id;
 
         if ($request->hasFile('fichier')) {
@@ -47,13 +52,20 @@ class RapportController extends Controller
 
     public function edit(Rapport $rapport)
     {
-        $projets = Projet::orderBy('intitule')->get();
+        // Le middleware projet.acces ne contrôle pas les requêtes GET : on vérifie ici.
+        $this->autoriserProjet((int) $rapport->projet_id);
+
+        $projets = $this->projetsAccessibles();
         return view('rapports.edit', compact('rapport', 'projets'));
     }
 
     public function update(Request $request, Rapport $rapport)
     {
+        // RG17 : le projet actuel ET le projet visé par le formulaire doivent être gérés par l'utilisateur.
+        $this->autoriserProjet((int) $rapport->projet_id);
+
         $data = $this->validateData($request);
+        $this->autoriserProjet((int) $data['projet_id']);
 
         if ($request->hasFile('fichier')) {
             if ($rapport->fichier) {
@@ -68,6 +80,8 @@ class RapportController extends Controller
 
     public function destroy(Rapport $rapport)
     {
+        $this->autoriserProjet((int) $rapport->projet_id);
+
         if ($rapport->fichier) {
             Storage::disk('public')->delete($rapport->fichier);
         }
@@ -81,15 +95,35 @@ class RapportController extends Controller
         return Storage::disk('public')->download($rapport->fichier, $rapport->titre.'.'.pathinfo($rapport->fichier, PATHINFO_EXTENSION));
     }
 
+    // Un gestionnaire ne peut choisir que parmi les projets qu'il gère ; l'administrateur voit tout.
+    private function projetsAccessibles()
+    {
+        $user = auth()->user();
+
+        return Projet::orderBy('intitule')
+            ->when(! $user->isAdministrateur(), fn ($q) => $q->whereIn('id', $user->projetsGeres()->pluck('projets.id')))
+            ->get();
+    }
+
     private function validateData(Request $request): array
     {
-        return $request->validate([
-            'type' => 'required|in:avancement,financier,physique,suivi,annuel,trimestriel,mensuel,synthese,execution',
+        $data = $request->validate([
+            'type' => 'required|in:avancement,financier,physique,suivi,annuel,trimestriel,mensuel,synthese,execution,cloture',
             'titre' => 'required|string|max:255',
+            'periode' => 'nullable|string|max:100',
             'donnees' => 'nullable|string',
             'date' => 'required|date',
             'projet_id' => 'required|exists:projets,id',
             'fichier' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
         ]);
+
+        // RG19 : le rapport de clôture n'est possible que lorsque l'avancement atteint 100 %.
+        if ($data['type'] === 'cloture' && (int) Projet::findOrFail($data['projet_id'])->avancement_physique < 100) {
+            throw ValidationException::withMessages([
+                'type' => "Un rapport de clôture n'est possible que lorsque l'avancement du projet atteint 100 %.",
+            ]);
+        }
+
+        return $data;
     }
 }

@@ -13,6 +13,7 @@ class ReformeController extends Controller
     {
         return [
             'libelle' => 'required|string|max:255',
+            'description' => 'nullable|string',
             'resultat_global_attendu' => 'nullable|string',
             'statut' => 'required|in:demarree,en_cours,achevee',
             'date_transmission_sgg' => 'nullable|date',

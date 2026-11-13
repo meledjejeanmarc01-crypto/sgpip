@@ -10,19 +10,28 @@
             <input type="text" name="libelle" value="{{ old('libelle') }}" class="form-control" required>
         </div>
         <div class="mb-3">
-            <label class="form-label">Rôle</label>
+            <label class="form-label">Fonction</label>
             <input type="text" name="role" value="{{ old('role') }}" class="form-control">
         </div>
         <div class="mb-3">
             <label class="form-label">Groupe d'acteur</label>
-            <select name="groupe_acteur_id" class="form-select">
+            <select name="groupe_acteur_id" class="form-select" data-creer-url="{{ route('groupes-acteur.store') }}" data-creer-nom="Nom du nouveau groupe d'acteur">
                 <option value="">-- Aucun --</option>
                 @foreach($groupes as $g)
                     <option value="{{ $g->id }}" @selected(old('groupe_acteur_id') == $g->id)>{{ $g->libelle }}</option>
                 @endforeach
             </select>
         </div>
-        <button class="btn text-white" style="background:#FF8200;">Enregistrer</button>
+        <div class="mb-3">
+            <label class="form-label">Partie prenante</label>
+            <select name="partie_prenante_id" class="form-select">
+                <option value="">-- Aucune --</option>
+                @foreach($partiesPrenantes as $pp)
+                    <option value="{{ $pp->id }}" @selected(old('partie_prenante_id', '') == $pp->id)>{{ $pp->libelle }}@if($pp->projet) — {{ $pp->projet->reference }}@endif</option>
+                @endforeach
+            </select>
+        </div>
+        <button class="btn btn-brand">Enregistrer</button>
         <a href="{{ route('acteurs.index') }}" class="btn btn-outline-secondary">Annuler</a>
     </form>
 </div>

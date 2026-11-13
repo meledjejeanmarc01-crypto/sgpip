@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Programme extends Model
 {
-    protected $fillable = ['nom', 'libelle', 'code', 'date_debut', 'date_fin', 'structure_id'];
+    protected $fillable = ['nom', 'libelle', 'axe_strategique', 'code', 'date_debut', 'date_fin', 'structure_id'];
 
     protected function casts(): array
     {

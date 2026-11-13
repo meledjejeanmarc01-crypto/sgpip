@@ -1,0 +1,41 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+    mem_limit: 512m
+
+  db:
+    image: mysql:8
+    command: >
+      --performance-schema=OFF
+      --innodb-buffer-pool-size=128M
+      --max-connections=20
+      --skip-log-bin
+      --innodb-flush-log-at-trx-commit=2
+    environment:
+      MYSQL_DATABASE: sgspip
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    mem_limit: 512m
+
+  phpmyadmin:
+    image: phpmyadmin
+    profiles: ["tools"]
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
+    mem_limit: 128m
+
+volumes:
+  db_data:

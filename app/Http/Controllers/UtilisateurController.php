@@ -29,7 +29,7 @@ class UtilisateurController extends Controller
             'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:administrateur,gestionnaire_projet,responsable_financier,responsable_suivi_evaluation,consultant',
+            'role' => 'required|in:administrateur,gestionnaire_projet,consultant',
         ]);
         $data['password'] = Hash::make($data['password']);
         User::create($data);
@@ -48,7 +48,7 @@ class UtilisateurController extends Controller
             'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$utilisateur->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|in:administrateur,gestionnaire_projet,responsable_financier,responsable_suivi_evaluation,consultant',
+            'role' => 'required|in:administrateur,gestionnaire_projet,consultant',
             'actif' => 'sometimes|boolean',
         ]);
 

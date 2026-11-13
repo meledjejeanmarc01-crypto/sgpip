@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bailleur;
+use App\Models\PaysEtranger;
 use App\Models\TypeBailleur;
 use Illuminate\Http\Request;
 
@@ -21,7 +22,8 @@ class BailleurController extends Controller
     public function create()
     {
         $types = TypeBailleur::orderBy('libelle')->get();
-        return view('bailleurs.create', compact('types'));
+        $pays = PaysEtranger::orderBy('libelle')->get();
+        return view('bailleurs.create', compact('types', 'pays'));
     }
 
     public function store(Request $request)
@@ -40,7 +42,8 @@ class BailleurController extends Controller
     public function edit(Bailleur $bailleur)
     {
         $types = TypeBailleur::orderBy('libelle')->get();
-        return view('bailleurs.edit', compact('bailleur', 'types'));
+        $pays = PaysEtranger::orderBy('libelle')->get();
+        return view('bailleurs.edit', compact('bailleur', 'types', 'pays'));
     }
 
     public function update(Request $request, Bailleur $bailleur)
@@ -66,6 +69,7 @@ class BailleurController extends Controller
             'sigle' => 'nullable|string|max:50',
             'contact' => 'nullable|string|max:255',
             'type_bailleur_id' => 'required|exists:types_bailleur,id',
+            'pays_etranger_id' => 'nullable|exists:pays_etrangers,id',
         ]);
     }
 }

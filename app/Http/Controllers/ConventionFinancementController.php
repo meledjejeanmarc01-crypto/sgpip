@@ -18,7 +18,22 @@ class ConventionFinancementController extends Controller
             'numero_accord_signe' => 'nullable|string|max:255',
             'montant' => 'nullable|numeric|min:0',
             'date_signature' => 'nullable|date',
+            // Feuille PLANIFICATION, section 3
+            'engagement_contractuel' => 'nullable|boolean',
+            'date_avancement_negociations' => 'nullable|date',
+            'proroge' => 'nullable|boolean',
+            'duree_prorogation_mois' => 'nullable|integer|min:0|max:600',
         ];
+    }
+
+    // Liste de toutes les conventions de financement.
+    public function index()
+    {
+        $conventions = ConventionFinancement::with('financement.projet', 'financement.bailleur')
+            ->latest('date_signature')
+            ->paginate(20);
+
+        return view('conventions.index', compact('conventions'));
     }
 
     public function store(Request $request, Financement $financement)

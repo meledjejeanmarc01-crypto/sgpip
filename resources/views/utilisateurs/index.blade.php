@@ -3,7 +3,7 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="fw-bold m-0">Gestion des utilisateurs</h5>
-    <a href="{{ route('utilisateurs.create') }}" class="btn btn-sm text-white" style="background:#FF8200;"><i class="bi bi-plus-lg"></i> Nouvel utilisateur</a>
+    <a href="{{ route('utilisateurs.create') }}" class="btn btn-sm btn-brand"><i class="bi bi-plus-lg"></i> Nouvel utilisateur</a>
 </div>
 <div class="card card-stat">
     <div class="table-responsive">

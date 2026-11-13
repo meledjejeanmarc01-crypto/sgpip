@@ -21,7 +21,12 @@ class GroupeActeurController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate(['libelle' => 'required|string|max:255|unique:groupes_acteur,libelle']);
-        GroupeActeur::create($data);
+        $type = GroupeActeur::create($data);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['id' => $type->id, 'libelle' => $type->libelle], 201);
+        }
+
         return redirect()->route('groupes-acteur.index')->with('success', 'Groupe d\'acteur créé avec succès.');
     }
 

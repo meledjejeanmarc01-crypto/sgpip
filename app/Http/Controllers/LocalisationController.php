@@ -2,76 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\District;
-use App\Models\Region;
-use App\Models\Departement;
-use App\Models\Commune;
+use App\Models\Localisation;
+use App\Models\NiveauLocalisation;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
+// API JSON pour les listes déroulantes : localisations d'un niveau donné.
+// Sert au choix du parent (page Localisation) et de la localisation d'une zone d'exécution.
 class LocalisationController extends Controller
 {
-    /**
-     * Retourne les régions d'un district.
-     */
-    public function regions(District $district): JsonResponse
+    public function parNiveau(Request $request, NiveauLocalisation $niveau): JsonResponse
     {
-        return response()->json(
-            $district->regions()
-                ->orderBy('nom')
-                ->get(['id', 'nom'])
-        );
-    }
+        $liste = Localisation::query()
+            ->with('district', 'region', 'departement', 'commune', 'sousPrefecture')
+            ->where('niveau_id', $niveau->id)
+            // ?libres=1 : uniquement les localisations sans zone d'exécution (RG42),
+            // en gardant celle de la zone en cours de modification (?except_zone=ID).
+            ->when($request->boolean('libres'), function ($q) use ($request) {
+                $q->where(function ($w) use ($request) {
+                    $w->whereDoesntHave('zoneExecution');
+                    if ($request->filled('except_zone')) {
+                        $w->orWhereHas('zoneExecution', fn ($z) => $z->where('id', $request->except_zone));
+                    }
+                });
+            })
+            ->orderBy('libelle')
+            ->get()
+            ->map(fn ($l) => [
+                'id' => $l->id,
+                'libelle' => $l->libelle,
+                'label' => $l->libelle.($l->parent_immediat ? ' — '.$l->parent_immediat->libelle : ''),
+            ]);
 
-    /**
-     * Retourne les départements d'une région.
-     */
-    public function departements(Region $region): JsonResponse
-    {
-        return response()->json(
-            $region->departements()
-                ->orderBy('nom')
-                ->get(['id', 'nom'])
-        );
-    }
-
-    /**
-     * Retourne les sous-préfectures d'un département.
-     */
-    public function sousPrefectures(Departement $departement): JsonResponse
-    {
-        return response()->json(
-            $departement->sousPrefectures()
-                ->orderBy('nom')
-                ->get(['id', 'nom'])
-        );
-    }
-
-    /**
-     * Retourne les communes d'un département.
-     */
-    public function communes(Departement $departement): JsonResponse
-    {
-        return response()->json(
-            $departement->communes()
-                ->orderBy('nom')
-                ->get(['id', 'nom'])
-        );
-    }
-
-    /**
-     * Retourne les localités d'une commune.
-     */
-    public function localites(Commune $commune): JsonResponse
-    {
-        return response()->json(
-            $commune->localites()
-                ->orderBy('nom')
-                ->get([
-                    'id',
-                    'nom',
-                    'latitude',
-                    'longitude'
-                ])
-        );
+        return response()->json($liste);
     }
 }

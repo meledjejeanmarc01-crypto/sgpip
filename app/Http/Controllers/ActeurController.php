@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Acteur;
 use App\Models\GroupeActeur;
+use App\Models\PartiePrenante;
 use App\Models\Projet;
 use Illuminate\Http\Request;
 
@@ -11,14 +12,15 @@ class ActeurController extends Controller
 {
     public function index()
     {
-        $acteurs = Acteur::with('groupeActeur')->orderBy('libelle')->paginate(15);
+        $acteurs = Acteur::with('groupeActeur', 'partiePrenante.projet')->orderBy('libelle')->paginate(15);
         return view('acteurs.index', compact('acteurs'));
     }
 
     public function create()
     {
         $groupes = GroupeActeur::orderBy('libelle')->get();
-        return view('acteurs.create', compact('groupes'));
+        $partiesPrenantes = PartiePrenante::with('projet')->orderBy('libelle')->get();
+        return view('acteurs.create', compact('groupes', 'partiesPrenantes'));
     }
 
     public function store(Request $request)
@@ -27,6 +29,7 @@ class ActeurController extends Controller
             'libelle' => 'required|string|max:255',
             'role' => 'nullable|string|max:255',
             'groupe_acteur_id' => 'nullable|exists:groupes_acteur,id',
+            'partie_prenante_id' => 'nullable|exists:parties_prenantes,id',
         ]);
         Acteur::create($data);
         return redirect()->route('acteurs.index')->with('success', 'Acteur créé avec succès.');
@@ -35,7 +38,8 @@ class ActeurController extends Controller
     public function edit(Acteur $acteur)
     {
         $groupes = GroupeActeur::orderBy('libelle')->get();
-        return view('acteurs.edit', compact('acteur', 'groupes'));
+        $partiesPrenantes = PartiePrenante::with('projet')->orderBy('libelle')->get();
+        return view('acteurs.edit', compact('acteur', 'groupes', 'partiesPrenantes'));
     }
 
     public function update(Request $request, Acteur $acteur)
@@ -44,6 +48,7 @@ class ActeurController extends Controller
             'libelle' => 'required|string|max:255',
             'role' => 'nullable|string|max:255',
             'groupe_acteur_id' => 'nullable|exists:groupes_acteur,id',
+            'partie_prenante_id' => 'nullable|exists:parties_prenantes,id',
         ]);
         $acteur->update($data);
         return redirect()->route('acteurs.index')->with('success', 'Acteur mis à jour.');

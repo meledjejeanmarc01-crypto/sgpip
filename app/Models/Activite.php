@@ -32,4 +32,10 @@ class Activite extends Model
     {
         return $this->belongsTo(Composante::class);
     }
+
+    /** Projet auquel cet élément est rattaché. */
+    public function projetAssocie(): ?Projet
+    {
+        return $this->projet;
+    }
 }

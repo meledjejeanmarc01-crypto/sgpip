@@ -9,7 +9,7 @@
             <label class="form-label">Libellé</label>
             <input type="text" name="libelle" value="{{ old('libelle') }}" class="form-control" required>
         </div>
-        <button class="btn text-white" style="background:#FF8200;">Enregistrer</button>
+        <button class="btn btn-brand">Enregistrer</button>
         <a href="{{ route('types-bailleur.index') }}" class="btn btn-outline-secondary">Annuler</a>
     </form>
 </div>

@@ -6,12 +6,14 @@ use App\Models\PartiePrenante;
 use App\Models\Projet;
 use Illuminate\Http\Request;
 
+// PARTIE_PRENANTE — cahier : "id, libéllé, sig, projet_id, Type partie prenante_id" (RG51).
 class PartiePrenanteController extends Controller
 {
     public function store(Request $request, Projet $projet)
     {
         $data = $request->validate([
-            'groupe_acteurs' => 'required|string|max:255',
+            'libelle' => 'required|string|max:255',
+            'sig' => 'nullable|string|max:50',
             'role' => 'nullable|string|max:255',
             'type_partie_prenante_id' => 'nullable|exists:types_partie_prenante,id',
         ]);
@@ -23,7 +25,8 @@ class PartiePrenanteController extends Controller
     public function update(Request $request, PartiePrenante $partiePrenante)
     {
         $data = $request->validate([
-            'groupe_acteurs' => 'required|string|max:255',
+            'libelle' => 'required|string|max:255',
+            'sig' => 'nullable|string|max:50',
             'role' => 'nullable|string|max:255',
             'type_partie_prenante_id' => 'nullable|exists:types_partie_prenante,id',
         ]);

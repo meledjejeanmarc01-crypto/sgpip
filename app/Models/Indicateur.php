@@ -18,6 +18,12 @@ class Indicateur extends Model
         return $this->belongsTo(Activite::class);
     }
 
+    // RG12 : quatre cibles trimestrielles par indicateur.
+    public function ciblesTrimestrielles()
+    {
+        return $this->hasMany(CibleTrimestrielle::class)->orderBy('trimestre');
+    }
+
     public function resultatAttendu()
     {
         return $this->belongsTo(ResultatAttendu::class);
@@ -29,5 +35,11 @@ class Indicateur extends Model
             return null;
         }
         return round(($this->valeur_realisee / $this->valeur_cible) * 100, 1);
+    }
+
+    /** Projet dont dépend cet indicateur (via son activité). */
+    public function projetAssocie(): ?Projet
+    {
+        return $this->activite?->projet;
     }
 }

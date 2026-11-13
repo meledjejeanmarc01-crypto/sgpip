@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tache extends Model
 {
-    protected $fillable = ['intitule', 'description', 'date_debut', 'date_fin', 'activite_id', 'depense_id'];
+    protected $fillable = ['intitule', 'description', 'statut', 'date_debut', 'date_fin', 'activite_id', 'depense_id'];
 
     protected function casts(): array
     {
@@ -21,5 +21,11 @@ class Tache extends Model
     public function depense()
     {
         return $this->belongsTo(Depense::class);
+    }
+
+    /** Projet dont dépend cette tâche (via son activité). */
+    public function projetAssocie(): ?Projet
+    {
+        return $this->activite?->projet;
     }
 }

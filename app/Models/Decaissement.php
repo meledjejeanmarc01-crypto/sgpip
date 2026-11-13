@@ -22,4 +22,10 @@ class Decaissement extends Model
     {
         return $this->belongsTo(Financement::class);
     }
+
+    /** Projet financé (via le financement concerné). */
+    public function projetAssocie(): ?Projet
+    {
+        return $this->financement?->projet;
+    }
 }

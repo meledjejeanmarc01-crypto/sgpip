@@ -21,7 +21,13 @@ class SecteurController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate(['libelle' => 'required|string|max:255|unique:secteurs,libelle']);
-        Secteur::create($data);
+        $secteur = Secteur::create($data);
+
+        // Création rapide depuis le formulaire de projet (réponse JSON, sans quitter la page).
+        if ($request->wantsJson()) {
+            return response()->json(['id' => $secteur->id, 'libelle' => $secteur->libelle, 'sigle' => null], 201);
+        }
+
         return redirect()->route('secteurs.index')->with('success', 'Secteur créé avec succès.');
     }
 

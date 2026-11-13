@@ -6,11 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Financement extends Model
 {
-    protected $fillable = ['montant_engage', 'date', 'reference', 'type_source', 'projet_id', 'bailleur_id', 'etat_id'];
+    protected $fillable = [
+        'montant_engage', 'date', 'reference', 'type_source', 'numero_convention', 'date_convention', 'devise', 'taux_change',
+        'ressources_internes', 'ressources_externes', 'statut', 'observation',
+        'code_guichet', 'montant_devise', 'beneficiaire', 'montant_don', 'montant_emprunt',
+        'projet_id', 'bailleur_id',
+    ];
 
     protected function casts(): array
     {
-        return ['date' => 'date'];
+        return [
+            'date' => 'date', 'date_convention' => 'date',
+            'taux_change' => 'decimal:4',
+            'ressources_internes' => 'decimal:2',
+            'ressources_externes' => 'decimal:2',
+            'montant_devise' => 'decimal:2',
+            'montant_don' => 'decimal:2',
+            'montant_emprunt' => 'decimal:2',
+        ];
     }
 
     public function projet()
@@ -21,11 +34,6 @@ class Financement extends Model
     public function bailleur()
     {
         return $this->belongsTo(Bailleur::class);
-    }
-
-    public function etat()
-    {
-        return $this->belongsTo(Etat::class);
     }
 
     public function decaissements()
@@ -40,9 +48,12 @@ class Financement extends Model
 
     public function getSourceLibelleAttribute(): string
     {
-        if ($this->bailleur_id) {
-            return $this->bailleur?->nom ?? '—';
-        }
-        return $this->etat?->libelle ?? 'État';
+        return $this->bailleur?->nom ?? '—';
+    }
+
+    /** Projet auquel cet élément est rattaché. */
+    public function projetAssocie(): ?Projet
+    {
+        return $this->projet;
     }
 }

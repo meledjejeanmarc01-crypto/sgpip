@@ -21,7 +21,12 @@ class TypeAnalyseCausaleController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate(['libelle' => 'required|string|max:255|unique:types_analyse_causale,libelle']);
-        TypeAnalyseCausale::create($data);
+        $type = TypeAnalyseCausale::create($data);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['id' => $type->id, 'libelle' => $type->libelle], 201);
+        }
+
         return redirect()->route('types-analyse-causale.index')->with('success', 'Type d\'analyse causale créé avec succès.');
     }
 

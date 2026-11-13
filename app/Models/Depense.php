@@ -22,4 +22,10 @@ class Depense extends Model
     {
         return $this->hasMany(Tache::class);
     }
+
+    /** Projet auquel cet élément est rattaché. */
+    public function projetAssocie(): ?Projet
+    {
+        return $this->projet;
+    }
 }

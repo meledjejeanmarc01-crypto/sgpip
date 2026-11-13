@@ -14,7 +14,7 @@ class RisqueController extends Controller
             'libelle' => 'required|string|max:255',
             'consequence' => 'nullable|string',
             'probabilite' => 'required|in:faible,moyenne,forte',
-            'criticite' => 'required|in:faible,moyenne,elevee',
+            'impact' => 'required|in:faible,moyenne,elevee',
             'mesure_mitigation' => 'nullable|string',
             'type_strategie' => 'nullable|string|max:255',
         ]);
@@ -29,7 +29,7 @@ class RisqueController extends Controller
             'libelle' => 'required|string|max:255',
             'consequence' => 'nullable|string',
             'probabilite' => 'required|in:faible,moyenne,forte',
-            'criticite' => 'required|in:faible,moyenne,elevee',
+            'impact' => 'required|in:faible,moyenne,elevee',
             'mesure_mitigation' => 'nullable|string',
             'type_strategie' => 'nullable|string|max:255',
         ]);

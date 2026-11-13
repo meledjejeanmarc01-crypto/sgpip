@@ -6,8 +6,10 @@
     <form method="POST" action="{{ route('reformes.update', $reforme) }}">
         @csrf @method('PUT')
         @include('reformes.form')
-        <button class="btn text-white" style="background:#FF8200;">Mettre à jour</button>
-        <a href="{{ route('reformes.show', $reforme) }}" class="btn btn-outline-secondary">Annuler</a>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="submit" class="btn btn-brand">Mettre à jour</button>
+            <a href="{{ route('reformes.show', $reforme) }}" class="btn btn-outline-secondary">Annuler</a>
+        </div>
     </form>
 </div>
 @endsection

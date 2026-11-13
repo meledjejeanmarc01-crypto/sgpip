@@ -18,7 +18,7 @@
             <div class="col-md-8 mb-3">
                 <label class="form-label">Rôle</label>
                 <select name="role" class="form-select" required>
-                    @foreach(['administrateur'=>'Administrateur','gestionnaire_projet'=>'Gestionnaire de projets','responsable_financier'=>'Responsable financier','responsable_suivi_evaluation'=>'Responsable suivi-évaluation','consultant'=>'Utilisateur consultant'] as $val=>$label)
+                    @foreach(['administrateur'=>'Administrateur','gestionnaire_projet'=>'Gestionnaire de projet','consultant'=>'Consultant'] as $val=>$label)
                         <option value="{{ $val }}" @selected(old('role', $utilisateur->role)==$val)>{{ $label }}</option>
                     @endforeach
                 </select>
@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn text-white" style="background:#FF8200;">Mettre à jour</button>
+        <button class="btn btn-brand">Mettre à jour</button>
         <a href="{{ route('utilisateurs.index') }}" class="btn btn-outline-secondary">Annuler</a>
     </form>
 </div>

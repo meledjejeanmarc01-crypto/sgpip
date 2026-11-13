@@ -6,7 +6,7 @@
     <form method="POST" action="{{ route('rapports.store') }}" enctype="multipart/form-data">
         @csrf
         @include('rapports.form')
-        <button class="btn text-white" style="background:#FF8200;">Enregistrer</button>
+        <button class="btn btn-brand">Enregistrer</button>
         <a href="{{ route('rapports.index') }}" class="btn btn-outline-secondary">Annuler</a>
     </form>
 </div>

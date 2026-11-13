@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Structure extends Model
 {
-    protected $fillable = ['libelle', 'sigle', 'adresse', 'telephone', 'type_structure_id'];
+    protected $fillable = ['libelle', 'sigle', 'adresse', 'telephone', 'email', 'type_structure_id'];
 
     public function typeStructure()
     {

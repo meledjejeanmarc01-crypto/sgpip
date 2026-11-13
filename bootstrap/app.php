@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\AccesModule;
+use App\Http\Middleware\AccesProjet;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => RoleMiddleware::class,
+            'acces' => AccesModule::class,        // droits par module (config/acces.php)
+            'projet.acces' => AccesProjet::class, // un gestionnaire ne modifie que ses projets (RG17)
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -35,6 +35,7 @@ class TacheController extends Controller
         return $request->validate([
             'intitule' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'statut' => 'nullable|in:a_faire,en_cours,termine',
             'date_debut' => 'nullable|date',
             'date_fin' => 'nullable|date|after_or_equal:date_debut',
             'depense_id' => 'nullable|exists:depenses,id',

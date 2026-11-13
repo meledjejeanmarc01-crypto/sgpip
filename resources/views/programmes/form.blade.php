@@ -12,6 +12,10 @@
     <label class="form-label">Libellé (description courte)</label>
     <input type="text" name="libelle" value="{{ old('libelle', $programme->libelle ?? '') }}" class="form-control">
 </div>
+<div class="mb-3">
+    <label class="form-label">Axe stratégique</label>
+    <input type="text" name="axe_strategique" value="{{ old('axe_strategique', $programme->axe_strategique ?? '') }}" class="form-control">
+</div>
 <div class="row">
     <div class="col-md-4 mb-3">
         <label class="form-label">Date début</label>

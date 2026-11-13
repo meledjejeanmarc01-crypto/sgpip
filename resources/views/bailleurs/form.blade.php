@@ -37,7 +37,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" id="btnCreerTypeBailleur" class="btn text-white" style="background:#FF8200;">Créer</button>
+                <button type="button" id="btnCreerTypeBailleur" class="btn btn-brand">Créer</button>
             </div>
         </div>
     </div>
@@ -86,6 +86,15 @@ document.getElementById('btnCreerTypeBailleur').addEventListener('click', functi
 });
 </script>
 @endpush
+<div class="mb-3">
+    <label class="form-label">Pays du bailleur</label>
+    <select name="pays_etranger_id" class="form-select">
+        <option value="">-- Aucun / Côte d'Ivoire --</option>
+        @foreach($pays as $p)
+            <option value="{{ $p->id }}" @selected(old('pays_etranger_id', $bailleur->pays_etranger_id ?? '') == $p->id)>{{ $p->libelle }}@if($p->code_iso) ({{ strtoupper($p->code_iso) }})@endif</option>
+        @endforeach
+    </select>
+</div>
 <div class="mb-3">
     <label class="form-label">Contact</label>
     <input type="text" name="contact" value="{{ old('contact', $bailleur->contact ?? '') }}" class="form-control">
